@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -14,8 +13,10 @@
 <body>
 
 <nav class="navbar">
-  <div class="logo">Neeraj.dev</div>
-
+ <div class="logo">
+  <img id="siteLogoImage" src="" alt="Logo">
+  <span id="siteLogoText">Neeraj.dev</span>
+</div>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
@@ -25,60 +26,61 @@
     <a href="hire.html">Hire Me</a>
     <a href="contact.html">Contact</a>
     <a href="login.html">Login</a>
-    <a href="/admin">Admin</a>
+
   </div>
 </nav>
 
 <section class="section">
-
   <h2>Get In Touch</h2>
 
   <div class="grid">
 
-```
-<div class="card">
-  <h3>Contact Information</h3>
+    <div class="card">
+      <h3>Contact Information</h3>
 
-  <p><strong>Name:</strong> Neeraj Swami</p>
-  <p><strong>Role:</strong> IT Support Assistant & Full Stack Learner</p>
-  <p><strong>Email:</strong> swamineeraj642@gmail.com</p>
-  <p><strong>Location:</strong> Rajasthan, India</p>
+      <p><strong>Name:</strong> Neeraj Swami</p>
+      <p><strong>Role:</strong> IT Support Assistant & Full Stack Learner</p>
+      <p><strong>Email:</strong> swamineeraj642@gmail.com</p>
+      <p><strong>Location:</strong> Rajasthan, India</p>
 
-  <br>
+      <br>
 
-  <p>
-    Feel free to contact me regarding IT Support,
-    e-Mitra services, web development projects,
-    technical collaboration, or professional opportunities.
-  </p>
-</div>
+      <p>
+        Feel free to contact me regarding IT Support,
+        e-Mitra services, web development projects,
+        technical collaboration, or professional opportunities.
+      </p>
+    </div>
 
-<form class="form-box">
+    <form class="form-box" id="contactForm">
+      <h3>Send Message</h3>
 
-  <h3>Send Message</h3>
+      <input type="text" id="contactName" placeholder="Your Name" required>
 
-  <input type="text" placeholder="Your Name" required>
+      <input type="email" id="contactEmail" placeholder="Your Email" required>
 
-  <input type="email" placeholder="Your Email" required>
+      <input type="text" id="contactMobile" placeholder="Your Mobile Number" required>
 
-  <input type="text" placeholder="Subject">
+      <input type="text" id="contactSubject" placeholder="Subject">
 
-  <textarea placeholder="Write your message here..." required></textarea>
+      <textarea id="contactMessage" placeholder="Write your message here..." required></textarea>
 
-  <button type="submit" class="btn">
-    Send Message
-  </button>
-
-</form>
-```
+      <button type="submit" class="btn">Send Message</button>
+    </form>
 
   </div>
-
 </section>
 
-<footer class="footer">
-  © 2026 Neeraj Swami. All Rights Reserved.
+<div id="socialLinks" class="social-links"></div>
+
+<footer class="footer" id="footerTextDisplay">
+  Loading...
 </footer>
+<script src="js/app.js"></script>
+
+<a id="whatsappFloat" class="whatsapp-float" href="#" target="_blank">
+  WhatsApp
+</a>
 
 </body>
 </html>
