@@ -15,18 +15,32 @@ body {
   line-height: 1.7;
 }
 
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 7%;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+/* Mobile */
+
+@media(max-width:768px){
+
+    .navbar{
+        flex-direction:column;
+        gap:15px;
+        text-align:center;
+    }
+
+    .nav-links{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:15px;
+    }
+
+    .logo{
+        font-size:1.6rem;
+    }
+
+    .logo img{
+        width:50px;
+        height:50px;
+    }
 }
+
 
 .logo {
   font-weight: 800;
@@ -452,4 +466,67 @@ textarea {
 
 .whatsapp-float:hover {
   transform: translateY(-3px);
+}
+
+
+.navbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  background: #ffffff !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 14px 7% !important;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.08) !important;
+}
+
+.logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  font-size: 34px !important;
+  font-weight: 800 !important;
+  color: #db2777 !important;
+}
+
+.logo img {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+
+.nav-links {
+  display: flex !important;
+  align-items: center !important;
+  gap: 24px !important;
+  flex-wrap: wrap !important;
+}
+
+.nav-links a {
+  text-decoration: none !important;
+  color: #374151 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.nav-links a:hover {
+  color: #db2777 !important;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column !important;
+    gap: 15px !important;
+  }
+
+  .nav-links {
+    justify-content: center !important;
+    gap: 18px !important;
+  }
+
+  .logo {
+    font-size: 32px !important;
+  }
 }
