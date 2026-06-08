@@ -103,7 +103,7 @@ async function loadAdminUsers() {
     <td>${user.email}</td>
     <td>${user.role}</td>
     <td>
-      <button class="edit-btn" onclick="editUser(${user.id})">
+      
         Edit
       </button>
 
@@ -617,7 +617,7 @@ async function deleteUser(id) {
     alert(data.message || "User deleted");
 
     loadAdminUsers();
-   <td>
+  <td>
   <button class="delete-btn" onclick="deleteUser(${user.id})">
     Delete
   </button>
@@ -631,9 +631,7 @@ async function deleteUser(id) {
 }
 
 
-function editUser(id) {
-  alert("Edit User Feature Coming Soon. User ID: " + id);
-}
+
 
 getMe();
 loadAdminUsers();
