@@ -617,6 +617,11 @@ async function deleteUser(id) {
     alert(data.message || "User deleted");
 
     loadAdminUsers();
+   <td>
+  <button class="delete-btn" onclick="deleteUser(${user.id})">
+    Delete
+  </button>
+</td>
 
   } catch (err) {
     console.error(err);
@@ -625,6 +630,10 @@ async function deleteUser(id) {
 
 }
 
+
+function editUser(id) {
+  alert("Edit User Feature Coming Soon. User ID: " + id);
+}
 
 getMe();
 loadAdminUsers();
