@@ -66,7 +66,7 @@ async function handleLogin(event) {
 
   if (res.ok) {
     if (data.role === 'admin') {
-      window.location.href = '/admin';
+     window.location.href = '/admin-neeraj-9079';
     } else {
       window.location.href = '/dashboard';
     }
