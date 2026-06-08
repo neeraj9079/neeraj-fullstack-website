@@ -100,6 +100,25 @@ app.get('/api/admin/users', requireAdmin, (req, res) => {
   const users = readUsers().map(({ password, ...safe }) => safe);
   res.json(users);
 });
+
+app.delete('/api/admin/users/:id', requireAdmin, (req, res) => {
+
+  const users = readUsers();
+
+  const updatedUsers = users.filter(
+    user => String(user.id) !== String(req.params.id)
+  );
+
+  saveUsers(updatedUsers);
+
+  res.json({
+    message: 'User deleted successfully'
+  });
+
+});
+
+
+
 app.get('/api/home', (req, res) => {
   const file = path.join(__dirname, 'data', 'home.json');
   if (!fs.existsSync(file)) fs.writeFileSync(file, JSON.stringify({

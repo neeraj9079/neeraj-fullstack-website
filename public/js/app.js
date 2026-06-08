@@ -97,13 +97,22 @@ async function loadAdminUsers() {
     const users = await res.json();
 
     usersBody.innerHTML = users.map(user => `
-      <tr>
-        <td>${user.id}</td>
-        <td>${user.name}</td>
-        <td>${user.email}</td>
-        <td>${user.role}</td>
-      </tr>
-    `).join('');
+  <tr>
+    <td>${user.id}</td>
+    <td>${user.name}</td>
+    <td>${user.email}</td>
+    <td>${user.role}</td>
+    <td>
+      <button class="edit-btn" onclick="editUser(${user.id})">
+        Edit
+      </button>
+
+      <button class="delete-btn" onclick="deleteUser(${user.id})">
+        Delete
+      </button>
+    </td>
+  </tr>
+`).join('');
 
     const totalUsers = document.getElementById('totalUsers');
     const adminUsers = document.getElementById('adminUsers');
@@ -586,6 +595,34 @@ if (resumeDownloadBtn) {
       }
 
     });
+}
+
+
+async function deleteUser(id) {
+
+  const confirmDelete = confirm(
+    "Are you sure you want to delete this user?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+
+    const res = await fetch(`/api/admin/users/${id}`, {
+      method: "DELETE"
+    });
+
+    const data = await res.json();
+
+    alert(data.message || "User deleted");
+
+    loadAdminUsers();
+
+  } catch (err) {
+    console.error(err);
+    alert("Delete failed");
+  }
+
 }
 
 
