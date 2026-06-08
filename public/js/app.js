@@ -66,7 +66,7 @@ async function handleLogin(event) {
 
   if (res.ok) {
     if (data.role === 'admin') {
-     window.location.href = '/admin-neeraj-9079';
+      window.location.href = '/admin-neeraj-9079';
     } else {
       window.location.href = '/dashboard';
     }
@@ -80,6 +80,7 @@ async function logout() {
 
 async function loadAdminUsers() {
   const usersBody = document.getElementById('usersBody');
+
   if (!usersBody) return;
 
   try {
@@ -88,7 +89,7 @@ async function loadAdminUsers() {
     if (!res.ok) {
       usersBody.innerHTML = `
         <tr>
-          <td colspan="4">Access denied. Admin login required.</td>
+          <td colspan="5">Access denied. Admin login required.</td>
         </tr>
       `;
       return;
@@ -97,22 +98,18 @@ async function loadAdminUsers() {
     const users = await res.json();
 
     usersBody.innerHTML = users.map(user => `
-  <tr>
-    <td>${user.id}</td>
-    <td>${user.name}</td>
-    <td>${user.email}</td>
-    <td>${user.role}</td>
-    <td>
-      
-        Edit
-      </button>
-
-      <button class="delete-btn" onclick="deleteUser(${user.id})">
-        Delete
-      </button>
-    </td>
-  </tr>
-`).join('');
+      <tr>
+        <td>${user.id}</td>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.role}</td>
+        <td>
+          <button class="delete-btn" onclick="deleteUser(${user.id})">
+            Delete
+          </button>
+        </td>
+      </tr>
+    `).join('');
 
     const totalUsers = document.getElementById('totalUsers');
     const adminUsers = document.getElementById('adminUsers');
@@ -361,6 +358,7 @@ async function deleteGalleryItem(id) {
   location.reload();
 }
 
+/* RESUME DISPLAY */
 const resumeBox = document.getElementById("resumeBox");
 
 if (resumeBox) {
@@ -380,6 +378,7 @@ if (resumeBox) {
     });
 }
 
+/* RESUME UPLOAD */
 const resumeForm = document.getElementById("resumeForm");
 
 if (resumeForm) {
@@ -407,6 +406,7 @@ if (resumeForm) {
   });
 }
 
+/* CONTACT FORM */
 const contactForm = document.getElementById("contactForm");
 
 if (contactForm) {
@@ -414,12 +414,12 @@ if (contactForm) {
     e.preventDefault();
 
     const body = {
-  name: document.getElementById("contactName").value,
-  email: document.getElementById("contactEmail").value,
-  mobile: document.getElementById("contactMobile").value,
-  subject: document.getElementById("contactSubject").value,
-  message: document.getElementById("contactMessage").value
-};
+      name: document.getElementById("contactName").value,
+      email: document.getElementById("contactEmail").value,
+      mobile: document.getElementById("contactMobile").value,
+      subject: document.getElementById("contactSubject").value,
+      message: document.getElementById("contactMessage").value
+    };
 
     const res = await fetch("/api/contact", {
       method: "POST",
@@ -434,6 +434,7 @@ if (contactForm) {
   });
 }
 
+/* ADMIN MESSAGES */
 const adminMessagesList = document.getElementById("adminMessagesList");
 
 if (adminMessagesList) {
@@ -469,14 +470,13 @@ async function deleteMessage(id) {
   location.reload();
 }
 
+/* SETTINGS */
 const settingsForm = document.getElementById("settingsForm");
 
 if (settingsForm) {
-
   fetch("/api/settings")
     .then(res => res.json())
     .then(data => {
-
       document.getElementById("siteLogo").value = data.logo || "";
       document.getElementById("logoImage").value = data.logoImage || "";
       document.getElementById("footerText").value = data.footer || "";
@@ -485,11 +485,9 @@ if (settingsForm) {
       document.getElementById("githubLink").value = data.github || "";
       document.getElementById("linkedinLink").value = data.linkedin || "";
       document.getElementById("instagramLink").value = data.instagram || "";
-
     });
 
   settingsForm.addEventListener("submit", async function(e) {
-
     e.preventDefault();
 
     const body = {
@@ -514,20 +512,21 @@ if (settingsForm) {
     const data = await res.json();
 
     alert(data.message);
-
   });
 }
 
+/* FOOTER */
 const footerDisplay = document.getElementById("footerTextDisplay");
 
 if (footerDisplay) {
   fetch("/api/settings")
     .then(res => res.json())
     .then(data => {
-      footerDisplay.textContent = data.footer;
+      footerDisplay.textContent = data.footer || "© 2026 Neeraj Swami. All Rights Reserved.";
     });
 }
 
+/* LOGO */
 const siteLogoText = document.getElementById("siteLogoText");
 const siteLogoImage = document.getElementById("siteLogoImage");
 
@@ -546,7 +545,7 @@ if (siteLogoText || siteLogoImage) {
     });
 }
 
-
+/* SOCIAL LINKS */
 const socialLinks = document.getElementById("socialLinks");
 
 if (socialLinks) {
@@ -563,6 +562,7 @@ if (socialLinks) {
     });
 }
 
+/* WHATSAPP FLOAT */
 const whatsappFloat = document.getElementById("whatsappFloat");
 
 if (whatsappFloat) {
@@ -578,60 +578,44 @@ if (whatsappFloat) {
     });
 }
 
-
-
+/* RESUME DOWNLOAD BUTTON */
 const resumeDownloadBtn = document.getElementById("resumeDownloadBtn");
 
 if (resumeDownloadBtn) {
   fetch("/api/resume")
     .then(res => res.json())
     .then(data => {
-
       if (data.resume) {
         resumeDownloadBtn.href = data.resume;
         resumeDownloadBtn.setAttribute("download", "");
       } else {
         resumeDownloadBtn.style.display = "none";
       }
-
     });
 }
 
-
+/* DELETE USER */
 async function deleteUser(id) {
-
-  const confirmDelete = confirm(
-    "Are you sure you want to delete this user?"
-  );
+  const confirmDelete = confirm("Are you sure you want to delete this user?");
 
   if (!confirmDelete) return;
 
   try {
-
     const res = await fetch(`/api/admin/users/${id}`, {
       method: "DELETE"
     });
 
     const data = await res.json();
 
-    alert(data.message || "User deleted");
+    alert(data.message || "User deleted successfully");
 
     loadAdminUsers();
-  <td>
-  <button class="delete-btn" onclick="deleteUser(${user.id})">
-    Delete
-  </button>
-</td>
 
   } catch (err) {
     console.error(err);
     alert("Delete failed");
   }
-
 }
-
-
-
 
 getMe();
 loadAdminUsers();
