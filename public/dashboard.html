@@ -1,1 +1,65 @@
-<!DOCTYPE html><html><head><title>User Dashboard</title><link rel="stylesheet" href="css/style.css"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><nav class="navbar"><div class="logo">Neeraj.dev</div><div class="nav-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="projects.html">Projects</a><a href="gallery.html">Gallery</a><a href="resume.html">Resume</a><a href="hire.html">Hire Me</a><a href="contact.html">Contact</a><a href="login.html">Login</a><a href="/admin">Admin</a></div></nav><section class="section"><h2>User Dashboard</h2><div class="card"><div id="userStatus"></div><p>This is a protected user page after login.</p></div></section><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>User Dashboard | Neeraj.dev</title>
+  <meta name="description" content="User dashboard for Neeraj.dev website users.">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo">Neeraj.dev</div>
+
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="projects.html">Projects</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="resume.html">Resume</a>
+      <a href="hire.html">Hire Me</a>
+      <a href="contact.html">Contact</a>
+      <a href="login.html">Login</a>
+      <a href="/admin">Admin</a>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="card">
+      <h2>User Dashboard</h2>
+
+      <p style="margin-top: 12px;">
+        Welcome to your user dashboard. This protected page is available after login.
+      </p>
+
+      <div id="userStatus" style="margin-top: 20px;"></div>
+
+      <div class="grid" style="margin-top: 30px;">
+        <div class="service">
+          <h3>Profile</h3>
+          <p>View your login status and user information.</p>
+        </div>
+
+        <div class="service">
+          <h3>Website Access</h3>
+          <p>Access protected sections after successful login.</p>
+        </div>
+
+        <div class="service">
+          <h3>Support</h3>
+          <p>Contact admin for technical support or account-related help.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    © 2026 Neeraj Swami. All Rights Reserved.
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

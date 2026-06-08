@@ -1,1 +1,78 @@
-<!DOCTYPE html><html><head><title>Login</title><link rel="stylesheet" href="css/style.css"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><nav class="navbar"><div class="logo">Neeraj.dev</div><div class="nav-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="projects.html">Projects</a><a href="gallery.html">Gallery</a><a href="resume.html">Resume</a><a href="hire.html">Hire Me</a><a href="contact.html">Contact</a><a href="login.html">Login</a><a href="/admin">Admin</a></div></nav><form class="form-box" onsubmit="handleLogin(event)"><h2>Login</h2><input name="email" type="email" placeholder="Email" required><input name="password" type="password" placeholder="Password" required><button class="btn">Login</button><p>New user? <a href="register.html">Register here</a></p></form><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Login | Neeraj.dev</title>
+
+  <meta name="description" content="Login to access your dashboard and protected website features.">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="logo">Neeraj.dev</div>
+
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="projects.html">Projects</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="resume.html">Resume</a>
+    <a href="hire.html">Hire Me</a>
+    <a href="contact.html">Contact</a>
+    <a href="/admin">Admin</a>
+  </div>
+</nav>
+
+<section class="section">
+
+  <form class="form-box" onsubmit="handleLogin(event)">
+
+```
+<h2>Welcome Back</h2>
+
+<p style="margin-bottom:20px;">
+  Sign in to access your account dashboard.
+</p>
+
+<input
+  name="email"
+  type="email"
+  placeholder="Enter your email"
+  required
+>
+
+<input
+  name="password"
+  type="password"
+  placeholder="Enter your password"
+  required
+>
+
+<button class="btn" type="submit">
+  Login
+</button>
+
+<p style="margin-top:20px;">
+  New user?
+  <a href="register.html">Create an account</a>
+</p>
+```
+
+  </form>
+
+</section>
+
+<footer class="footer">
+  © 2026 Neeraj Swami. All Rights Reserved.
+</footer>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,1 +1,81 @@
-<!DOCTYPE html><html><head><title>Admin Page</title><link rel="stylesheet" href="css/style.css"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><nav class="navbar"><div class="logo">Neeraj.dev</div><div class="nav-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="projects.html">Projects</a><a href="gallery.html">Gallery</a><a href="resume.html">Resume</a><a href="hire.html">Hire Me</a><a href="contact.html">Contact</a><a href="login.html">Login</a><a href="/admin">Admin</a></div></nav><section class="section"><h2>Admin Page</h2><div class="card"><div id="userStatus"></div><p>Only admin can open this page. First registered user becomes admin.</p><br><table class="admin-table"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th></tr></thead><tbody id="usersBody"></tbody></table></div></section><script src="js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Admin Dashboard | Neeraj.dev</title>
+  <meta name="description" content="Admin dashboard for managing users and website data.">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo">Neeraj.dev</div>
+
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="projects.html">Projects</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="resume.html">Resume</a>
+      <a href="hire.html">Hire Me</a>
+      <a href="contact.html">Contact</a>
+      <a href="login.html">Login</a>
+      <a href="/admin">Admin</a>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="card">
+      <h2>Admin Dashboard</h2>
+
+      <p style="margin-top:15px;">
+        Welcome to the administration panel. Manage users, monitor registrations,
+        and oversee website activity from a single dashboard.
+      </p>
+
+      <div id="userStatus" style="margin-top:20px;"></div>
+
+      <div class="grid" style="margin-top:30px;">
+        <div class="service">
+          <h3>Total Users</h3>
+          <p id="totalUsers">Loading...</p>
+        </div>
+
+        <div class="service">
+          <h3>Admin Users</h3>
+          <p id="adminUsers">Loading...</p>
+        </div>
+
+        <div class="service">
+          <h3>Website Status</h3>
+          <p>Online ✅</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:40px;">Registered Users</h3>
+
+      <table class="admin-table" style="margin-top:20px;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="footer">
+    © 2026 Neeraj Swami. All Rights Reserved.
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
