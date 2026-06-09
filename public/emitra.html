@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>e-Mitra Professional Portal | Neeraj.dev</title>
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <span>Neeraj.dev</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="projects.html">Projects</a>
+    <a href="emitra.html">e-Mitra Portal</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<section class="section">
+  <h1>e-Mitra Professional Portal</h1>
+
+  <input
+    type="text"
+    id="serviceSearch"
+    placeholder="Search Service..."
+    style="width:100%;padding:15px;border-radius:12px;margin-bottom:20px;"
+  >
+
+  <div id="emitraServicesContainer" class="grid">
+    <p>Loading Services...</p>
+  </div>
+</section>
+
+<script>
+const searchBox = document.getElementById("serviceSearch");
+const container = document.getElementById("emitraServicesContainer");
+
+let allServices = [];
+
+async function loadServices() {
+  try {
+    const res = await fetch("/api/emitra-services");
+    allServices = await res.json();
+
+    renderServices(allServices);
+
+  } catch (err) {
+    container.innerHTML = "<p>Unable to load services.</p>";
+  }
+}
+
+function renderServices(services) {
+
+  if (!services.length) {
+    container.innerHTML = "<p>No services available.</p>";
+    return;
+  }
+
+  container.innerHTML = services.map(service => `
+    <div class="service">
+
+      <h3>${service.name}</h3>
+
+      <p>
+        <strong>Category:</strong>
+        ${service.category}
+      </p>
+
+      <p>
+        <strong>Documents:</strong>
+        ${service.documents}
+      </p>
+
+      <p>
+        <strong>Fees:</strong>
+        ${service.fees || "N/A"}
+      </p>
+
+      <p>
+        <strong>Processing Time:</strong>
+        ${service.processingTime || "N/A"}
+      </p>
+
+      <p>
+        <strong>Status:</strong>
+        ${service.status}
+      </p>
+
+      <p>
+        ${service.description || ""}
+      </p>
+
+    </div>
+  `).join("");
+}
+
+searchBox.addEventListener("input", () => {
+
+  const keyword = searchBox.value.toLowerCase();
+
+  const filtered = allServices.filter(service =>
+    service.name.toLowerCase().includes(keyword) ||
+    service.category.toLowerCase().includes(keyword)
+  );
+
+  renderServices(filtered);
+});
+
+loadServices();
+</script>
+
+</body>
+</html>
