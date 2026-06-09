@@ -161,6 +161,10 @@ app.get("/admin-neeraj-9079", requireAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
+app.get("/admin-projects-neeraj-9079", requireAdmin, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin-projects.html"));
+});
+
 /* USERS */
 app.get("/api/admin/users", requireAdmin, (req, res) => {
   const users = readUsers().map(({ password, ...safe }) => safe);

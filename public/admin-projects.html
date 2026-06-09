@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projects Admin | Neeraj.dev</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="admin-body">
+
+<nav class="admin-topbar">
+  <div class="admin-brand">
+    <img id="siteLogoImage" src="" alt="Logo" />
+    <span id="siteLogoText">Neeraj.dev</span>
+  </div>
+
+  <div class="admin-actions">
+    <a href="admin.html">Main Admin</a>
+    <a href="index.html">View Website</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="admin-layout">
+
+  <aside class="admin-sidebar">
+    <h3>Projects Admin</h3>
+    <a href="admin.html">Main Admin</a>
+    <a href="#projects">Manage Projects</a>
+  </aside>
+
+  <main class="admin-main">
+
+    <section id="projects" class="admin-section">
+      <h2>Manage Projects</h2>
+
+      <form id="projectForm" class="admin-form">
+        <input type="text" id="projectTitle" placeholder="Project Title" required />
+        <textarea id="projectDescription" placeholder="Project Description" required></textarea>
+        <input type="url" id="projectGithub" placeholder="GitHub Link" />
+        <input type="url" id="projectDemo" placeholder="Live Demo Link" />
+        <button type="submit">Add Project</button>
+      </form>
+
+      <div id="adminProjectsList" class="admin-list"></div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="footer" id="footerTextDisplay">
+  Loading...
+</footer>
+
+<a id="whatsappFloat" class="whatsapp-float" href="#" target="_blank">
+  WhatsApp
+</a>
+
+<script src="js/app.js"></script>
+</body>
+</html>
