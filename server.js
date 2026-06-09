@@ -410,6 +410,33 @@ app.delete("/api/admin/messages/:id", requireAdmin, (req, res) => {
   res.json({ message: "Message deleted successfully" });
 });
 
+app.put("/api/admin/emitra-services/:id", requireAdmin, (req, res) => {
+  const services = readJson(EMITRA_FILE, []);
+
+  const updatedServices = services.map(service => {
+    if (String(service.id) === String(req.params.id)) {
+      return {
+        ...service,
+        name: req.body.name,
+        category: req.body.category,
+        documents: req.body.documents || "",
+        fees: req.body.fees || "",
+        processingTime: req.body.processingTime || "",
+        description: req.body.description || "",
+        status: req.body.status || "Active"
+      };
+    }
+
+    return service;
+  });
+
+  writeJson(EMITRA_FILE, updatedServices);
+
+  res.json({
+    message: "e-Mitra Service Updated Successfully"
+  });
+});
+
 /* VISITOR COUNTER */
 app.get("/api/visitor-count", (req, res) => {
   const file = path.join(__dirname, "data", "visitors.json");

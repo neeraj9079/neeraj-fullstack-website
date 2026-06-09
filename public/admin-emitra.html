@@ -29,19 +29,22 @@
     <section id="services" class="admin-section">
       <h2>Manage e-Mitra Services</h2>
 
+      <input type="hidden" id="editingServiceId">
+
       <form id="emitraServiceForm" class="admin-form">
         <input type="text" id="emitraName" placeholder="Service Name" required>
-        <select id="emitraCategory" required>
-  <option value="">Select Category</option>
 
-  <option value="Certificates">Certificates</option>
-  <option value="Identity Services">Identity Services</option>
-  <option value="Rajasthan Services">Rajasthan Services</option>
-  <option value="Utility Services">Utility Services</option>
-  <option value="Banking Services">Banking Services</option>
-  <option value="Education Services">Education Services</option>
-  <option value="Government Schemes">Government Schemes</option>
-</select>
+        <select id="emitraCategory" required>
+          <option value="">Select Category</option>
+          <option value="Certificates">Certificates</option>
+          <option value="Identity Services">Identity Services</option>
+          <option value="Rajasthan Services">Rajasthan Services</option>
+          <option value="Utility Services">Utility Services</option>
+          <option value="Banking Services">Banking Services</option>
+          <option value="Education Services">Education Services</option>
+          <option value="Government Schemes">Government Schemes</option>
+        </select>
+
         <textarea id="emitraDocuments" placeholder="Required Documents, comma separated" required></textarea>
         <input type="text" id="emitraFees" placeholder="Fees e.g. ₹50">
         <input type="text" id="emitraProcessingTime" placeholder="Processing Time e.g. 3-7 Days">
@@ -52,7 +55,8 @@
           <option value="Inactive">Inactive</option>
         </select>
 
-        <button type="submit">Add e-Mitra Service</button>
+        <button type="submit" id="emitraSubmitBtn">Add e-Mitra Service</button>
+        <button type="button" onclick="resetEmitraForm()">Cancel Edit</button>
       </form>
 
       <div id="adminEmitraServicesList" class="admin-list"></div>
@@ -65,42 +69,53 @@
 <script>
 const emitraServiceForm = document.getElementById("emitraServiceForm");
 const adminEmitraServicesList = document.getElementById("adminEmitraServicesList");
+const emitraSubmitBtn = document.getElementById("emitraSubmitBtn");
 
-if (emitraServiceForm) {
-  emitraServiceForm.addEventListener("submit", async function(e) {
-    e.preventDefault();
+let emitraServicesCache = [];
 
-    const body = {
-      name: document.getElementById("emitraName").value,
-      category: document.getElementById("emitraCategory").value,
-      documents: document.getElementById("emitraDocuments").value,
-      fees: document.getElementById("emitraFees").value,
-      processingTime: document.getElementById("emitraProcessingTime").value,
-      description: document.getElementById("emitraDescription").value,
-      status: document.getElementById("emitraStatus").value
-    };
+emitraServiceForm.addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-    const res = await fetch("/api/admin/emitra-services", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    });
+  const editingId = document.getElementById("editingServiceId").value;
 
-    const data = await res.json();
-    alert(data.message || "Service added");
+  const body = {
+    name: document.getElementById("emitraName").value,
+    category: document.getElementById("emitraCategory").value,
+    documents: document.getElementById("emitraDocuments").value,
+    fees: document.getElementById("emitraFees").value,
+    processingTime: document.getElementById("emitraProcessingTime").value,
+    description: document.getElementById("emitraDescription").value,
+    status: document.getElementById("emitraStatus").value
+  };
 
-    emitraServiceForm.reset();
-    loadAdminEmitraServices();
+  const url = editingId
+    ? `/api/admin/emitra-services/${editingId}`
+    : "/api/admin/emitra-services";
+
+  const method = editingId ? "PUT" : "POST";
+
+  const res = await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
   });
-}
+
+  const data = await res.json();
+  alert(data.message || "Saved successfully");
+
+  resetEmitraForm();
+  loadAdminEmitraServices();
+});
 
 async function loadAdminEmitraServices() {
   if (!adminEmitraServicesList) return;
 
   const res = await fetch("/api/emitra-services");
   const services = await res.json();
+
+  emitraServicesCache = services;
 
   if (!services.length) {
     adminEmitraServicesList.innerHTML = "<p>No e-Mitra services added yet.</p>";
@@ -115,9 +130,42 @@ async function loadAdminEmitraServices() {
       <p><strong>Fees:</strong> ${service.fees || "Not mentioned"}</p>
       <p><strong>Processing Time:</strong> ${service.processingTime || "Not mentioned"}</p>
       <p><strong>Status:</strong> ${service.status}</p>
+
+      <button onclick="editEmitraService(${service.id})">Edit</button>
       <button onclick="deleteEmitraService(${service.id})">Delete</button>
     </div>
   `).join("");
+}
+
+function editEmitraService(id) {
+  const service = emitraServicesCache.find(item => String(item.id) === String(id));
+
+  if (!service) {
+    alert("Service not found");
+    return;
+  }
+
+  document.getElementById("editingServiceId").value = service.id;
+  document.getElementById("emitraName").value = service.name || "";
+  document.getElementById("emitraCategory").value = service.category || "";
+  document.getElementById("emitraDocuments").value = service.documents || "";
+  document.getElementById("emitraFees").value = service.fees || "";
+  document.getElementById("emitraProcessingTime").value = service.processingTime || "";
+  document.getElementById("emitraDescription").value = service.description || "";
+  document.getElementById("emitraStatus").value = service.status || "Active";
+
+  emitraSubmitBtn.textContent = "Update e-Mitra Service";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function resetEmitraForm() {
+  document.getElementById("editingServiceId").value = "";
+  emitraServiceForm.reset();
+  emitraSubmitBtn.textContent = "Add e-Mitra Service";
 }
 
 async function deleteEmitraService(id) {
