@@ -1,1 +1,9 @@
-"role": "admin"
+[
+  {
+    "id": 1780838275419,
+    "name": "Neeraj",
+    "email": "swamineeraj642@gmail.com",
+    "password": "$2a$10$f1D/f.T/iQtvAoHBXDqOUeS5M/4QqGShqIRwdZxyuU5tvx2GEwWEu",
+    "role": "admin"
+  }
+]
