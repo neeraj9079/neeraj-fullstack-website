@@ -410,37 +410,34 @@ if (resumeForm) {
 const contactForm = document.getElementById("contactForm");
 
 if (contactForm) {
-  contactForm.addEventListener("submit", async function (e) {
+  contactForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    try {
-      const body = {
-        name: document.getElementById("contactName").value,
-        email: document.getElementById("contactEmail").value,
-        mobile: document.getElementById("contactMobile").value,
-        subject: document.getElementById("contactSubject").value,
-        message: document.getElementById("contactMessage").value
-      };
+    const body = {
+      name: document.getElementById("contactName").value,
+      email: document.getElementById("contactEmail").value,
+      mobile: document.getElementById("contactMobile").value,
+      subject: document.getElementById("contactSubject").value,
+      message: document.getElementById("contactMessage").value
+    };
 
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-      });
-
-      const data = await res.json();
-
-      alert(data.message || "Message sent successfully");
-
-      if (res.ok) {
+    fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    })
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (data) {
+        alert(data.message || "Message sent successfully");
         contactForm.reset();
-      }
-
-    } catch (error) {
-      console.error("Contact error:", error);
-      alert("Message sent successfully");
-      contactForm.reset();
-    }
+      })
+      .catch(function (error) {
+        console.error("Contact error:", error);
+        alert("Message sent successfully");
+        contactForm.reset();
+      });
   });
 }
 
