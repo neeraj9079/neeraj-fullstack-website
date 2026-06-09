@@ -413,19 +413,35 @@ if (contactForm) {
   contactForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const body = {
-      name: document.getElementById("contactName").value,
-      email: document.getElementById("contactEmail").value,
-      mobile: document.getElementById("contactMobile").value,
-      subject: document.getElementById("contactSubject").value,
-      message: document.getElementById("contactMessage").value
-    };
+    try {
+      const body = {
+        name: document.getElementById("contactName").value,
+        email: document.getElementById("contactEmail").value,
+        mobile: document.getElementById("contactMobile").value,
+        subject: document.getElementById("contactSubject").value,
+        message: document.getElementById("contactMessage").value
+      };
 
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      alert(data.message || "Message sent successfully");
+
+      if (res.ok) {
+        contactForm.reset();
+      }
+
+    } catch (error) {
+      console.error("Contact error:", error);
+      alert("Message sent, but response alert failed.");
+    }
+  });
+}
 
     const data = await res.json();
     alert(data.message || "Message sent successfully");
