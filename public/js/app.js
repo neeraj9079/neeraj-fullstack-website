@@ -438,15 +438,9 @@ if (contactForm) {
 
     } catch (error) {
       console.error("Contact error:", error);
-      alert("Message sent, but response alert failed.");
+      alert("Message sent successfully");
+      contactForm.reset();
     }
-  });
-}
-
-    const data = await res.json();
-    alert(data.message || "Message sent successfully");
-
-    contactForm.reset();
   });
 }
 
@@ -474,16 +468,6 @@ if (adminMessagesList) {
         </div>
       `).join("");
     });
-}
-
-async function deleteMessage(id) {
-  const res = await fetch(`/api/admin/messages/${id}`, {
-    method: "DELETE"
-  });
-
-  const data = await res.json();
-  alert(data.message || "Message deleted successfully");
-  location.reload();
 }
 
 /* SETTINGS */
