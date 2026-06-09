@@ -114,7 +114,6 @@ app.post("/api/register", async (req, res) => {
 
     saveUsers(users);
     res.json({ message: "Registered successfully. First user becomes admin." });
-
   } catch (error) {
     console.error("REGISTER ERROR:", error);
     res.status(500).json({ message: "Register failed" });
@@ -140,7 +139,6 @@ app.post("/api/login", async (req, res) => {
     };
 
     res.json({ message: "Login successful", role: user.role });
-
   } catch (error) {
     console.error("LOGIN ERROR:", error);
     res.status(500).json({ message: "Server login error" });
@@ -155,6 +153,7 @@ app.post("/api/logout", (req, res) => {
   req.session.destroy(() => res.json({ message: "Logged out" }));
 });
 
+/* SECURE PAGES */
 app.get("/dashboard", requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
@@ -264,7 +263,6 @@ app.post("/api/admin/gallery", requireAdmin, upload.single("image"), async (req,
     if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
     res.json({ message: "Gallery image uploaded to Cloudinary successfully" });
-
   } catch (error) {
     console.error("Cloudinary upload error:", error);
     res.status(500).json({ message: "Image upload failed" });
@@ -287,7 +285,6 @@ app.delete("/api/admin/gallery/:id", requireAdmin, async (req, res) => {
 
     writeJson(file, gallery.filter(g => String(g.id) !== String(req.params.id)));
     res.json({ message: "Gallery item deleted successfully" });
-
   } catch (error) {
     console.error("Gallery delete error:", error);
     res.status(500).json({ message: "Gallery item delete failed" });
@@ -307,7 +304,7 @@ app.post("/api/admin/resume", requireAdmin, upload.single("resume"), (req, res) 
   res.json({ message: "Resume uploaded successfully" });
 });
 
-/* BREVO EMAIL API */
+/* CONTACT EMAIL */
 async function sendBrevoEmail(payload) {
   if (!process.env.BREVO_API_KEY) {
     throw new Error("BREVO_API_KEY missing");
@@ -365,7 +362,6 @@ async function sendContactEmails(message) {
         <p><strong>Date:</strong> ${message.date}</p>
       `
     });
-
   } catch (err) {
     console.error("Brevo Email Error:", err.message);
   }
@@ -391,9 +387,7 @@ app.post("/api/contact", (req, res) => {
     writeJson(file, messages);
 
     res.json({ message: "Message sent successfully" });
-
     sendContactEmails(message);
-
   } catch (error) {
     console.error("CONTACT ERROR:", error);
     res.status(500).json({ message: "Message failed" });
@@ -409,6 +403,34 @@ app.delete("/api/admin/messages/:id", requireAdmin, (req, res) => {
   const messages = readJson(file, []);
   writeJson(file, messages.filter(msg => String(msg.id) !== String(req.params.id)));
   res.json({ message: "Message deleted successfully" });
+});
+
+/* EMITRA SERVICES */
+app.get("/api/emitra-services", (req, res) => {
+  res.json(readJson(EMITRA_FILE, []));
+});
+
+app.post("/api/admin/emitra-services", requireAdmin, upload.single("formPdf"), (req, res) => {
+  const services = readJson(EMITRA_FILE, []);
+
+  services.push({
+    id: Date.now(),
+    name: req.body.name,
+    category: req.body.category,
+    documents: req.body.documents || "",
+    fees: req.body.fees || "",
+    processingTime: req.body.processingTime || "",
+    description: req.body.description || "",
+    status: req.body.status || "Active",
+    formName: req.body.formName || "",
+    formPdf: req.file ? `/uploads/${req.file.filename}` : ""
+  });
+
+  writeJson(EMITRA_FILE, services);
+
+  res.json({
+    message: "e-Mitra Service Added Successfully"
+  });
 });
 
 app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf"), (req, res) => {
@@ -440,10 +462,16 @@ app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf")
   });
 });
 
-  writeJson(EMITRA_FILE, updatedServices);
+app.delete("/api/admin/emitra-services/:id", requireAdmin, (req, res) => {
+  const services = readJson(EMITRA_FILE, []);
+
+  writeJson(
+    EMITRA_FILE,
+    services.filter(service => String(service.id) !== String(req.params.id))
+  );
 
   res.json({
-    message: "e-Mitra Service Updated Successfully"
+    message: "e-Mitra Service Deleted Successfully"
   });
 });
 
@@ -495,50 +523,6 @@ app.get("/api/settings", (req, res) => {
 app.post("/api/admin/settings", requireAdmin, (req, res) => {
   writeJson(path.join(__dirname, "data", "settings.json"), req.body);
   res.json({ message: "Website settings updated successfully" });
-});
-
-/* EMITRA SERVICES */
-
-app.get("/api/emitra-services", (req, res) => {
-  res.json(readJson(EMITRA_FILE, []));
-});
-
-app.post("/api/admin/emitra-services", requireAdmin, upload.single("formPdf"), (req, res) => {
-  const services = readJson(EMITRA_FILE, []);
-
-  services.push({
-    id: Date.now(),
-    name: req.body.name,
-    category: req.body.category,
-    documents: req.body.documents || "",
-    fees: req.body.fees || "",
-    processingTime: req.body.processingTime || "",
-    description: req.body.description || "",
-    status: req.body.status || "Active",
-    formName: req.body.formName || "",
-    formPdf: req.file ? `/uploads/${req.file.filename}` : ""
-  });
-
-  writeJson(EMITRA_FILE, services);
-
-  res.json({
-    message: "e-Mitra Service Added Successfully"
-  });
-});
-
-app.delete("/api/admin/emitra-services/:id", requireAdmin, (req, res) => {
-  const services = readJson(EMITRA_FILE, []);
-
-  writeJson(
-    EMITRA_FILE,
-    services.filter(
-      service => String(service.id) !== String(req.params.id)
-    )
-  );
-
-  res.json({
-    message: "e-Mitra Service Deleted Successfully"
-  });
 });
 
 app.listen(PORT, () => {
