@@ -333,20 +333,20 @@ app.post("/api/admin/resume", requireAdmin, upload.single("resume"), (req, res) 
   res.json({ message: "Resume uploaded successfully" });
 });
 
-/* EMAIL BACKGROUND */
-async function sendContactEmails(message) {
-  try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: message.email,
-      subject: "Thank You For Contacting Neeraj Swami",
-      html: `
-        <h2>Thank You!</h2>
-        <p>Dear ${message.name},</p>
-        <p>Your message has been received successfully. I will contact you soon.</p>
-        <p>Regards,<br>Neeraj Swami</p>
-      `
-    });
+// /* EMAIL BACKGROUND */
+// async function sendContactEmails(message) {
+//   try {
+//     await transporter.sendMail({
+//       from: process.env.EMAIL_USER,
+//       to: message.email,
+//       subject: "Thank You For Contacting Neeraj Swami",
+//       html: `
+//         <h2>Thank You!</h2>
+//         <p>Dear ${message.name},</p>
+//         <p>Your message has been received successfully. I will contact you soon.</p>
+//         <p>Regards,<br>Neeraj Swami</p>
+//       `
+//     });
   } catch (err) {
     console.error("User Email Error:", err.message);
   }
