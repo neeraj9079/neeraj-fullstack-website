@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messages Admin | Neeraj.dev</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="admin-body">
+
+<nav class="admin-topbar">
+  <div class="admin-brand"><span>Neeraj.dev</span></div>
+  <div class="admin-actions">
+    <a href="admin.html">Main Admin</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <h3>Messages Admin</h3>
+    <a href="admin.html">Dashboard</a>
+  </aside>
+
+  <main class="admin-main">
+    <section class="admin-section">
+      <h2>Contact Messages</h2>
+      <div id="adminMessagesList" class="admin-list"></div>
+    </section>
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

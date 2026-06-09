@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings Admin | Neeraj.dev</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="admin-body">
+
+<nav class="admin-topbar">
+  <div class="admin-brand"><span>Neeraj.dev</span></div>
+  <div class="admin-actions">
+    <a href="admin.html">Main Admin</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <h3>Settings Admin</h3>
+    <a href="admin.html">Dashboard</a>
+  </aside>
+
+  <main class="admin-main">
+    <section class="admin-section">
+      <h2>Website Settings</h2>
+
+      <form id="settingsForm" class="admin-form">
+        <input type="text" id="siteLogo" placeholder="Logo Text">
+        <input type="text" id="logoImage" placeholder="Logo Image URL e.g. images/logo.png">
+        <input type="text" id="footerText" placeholder="Footer Text">
+        <input type="text" id="whatsappNumber" placeholder="WhatsApp Number">
+        <input type="email" id="siteEmail" placeholder="Email">
+        <input type="url" id="githubLink" placeholder="GitHub Link">
+        <input type="url" id="linkedinLink" placeholder="LinkedIn Link">
+        <input type="url" id="instagramLink" placeholder="Instagram Link">
+        <button type="submit">Save Settings</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
