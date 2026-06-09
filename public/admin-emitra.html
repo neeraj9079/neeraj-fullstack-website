@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>e-Mitra Admin | Neeraj.dev</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="admin-body">
+
+<nav class="admin-topbar">
+  <div class="admin-brand"><span>Neeraj.dev</span></div>
+  <div class="admin-actions">
+    <a href="admin.html">Main Admin</a>
+    <a href="emitra.html">View e-Mitra Portal</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <h3>e-Mitra Admin</h3>
+    <a href="admin.html">Dashboard</a>
+    <a href="#services">Manage Services</a>
+  </aside>
+
+  <main class="admin-main">
+    <section id="services" class="admin-section">
+      <h2>Manage e-Mitra Services</h2>
+
+      <form id="emitraServiceForm" class="admin-form">
+        <input type="text" id="emitraName" placeholder="Service Name" required>
+        <input type="text" id="emitraCategory" placeholder="Category e.g. Certificates" required>
+        <textarea id="emitraDocuments" placeholder="Required Documents, comma separated" required></textarea>
+        <input type="text" id="emitraFees" placeholder="Fees e.g. ₹50">
+        <input type="text" id="emitraProcessingTime" placeholder="Processing Time e.g. 3-7 Days">
+        <textarea id="emitraDescription" placeholder="Service Description"></textarea>
+
+        <select id="emitraStatus">
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+
+        <button type="submit">Add e-Mitra Service</button>
+      </form>
+
+      <div id="adminEmitraServicesList" class="admin-list"></div>
+    </section>
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+
+<script>
+const emitraServiceForm = document.getElementById("emitraServiceForm");
+const adminEmitraServicesList = document.getElementById("adminEmitraServicesList");
+
+if (emitraServiceForm) {
+  emitraServiceForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const body = {
+      name: document.getElementById("emitraName").value,
+      category: document.getElementById("emitraCategory").value,
+      documents: document.getElementById("emitraDocuments").value,
+      fees: document.getElementById("emitraFees").value,
+      processingTime: document.getElementById("emitraProcessingTime").value,
+      description: document.getElementById("emitraDescription").value,
+      status: document.getElementById("emitraStatus").value
+    };
+
+    const res = await fetch("/api/admin/emitra-services", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    alert(data.message || "Service added");
+
+    emitraServiceForm.reset();
+    loadAdminEmitraServices();
+  });
+}
+
+async function loadAdminEmitraServices() {
+  if (!adminEmitraServicesList) return;
+
+  const res = await fetch("/api/emitra-services");
+  const services = await res.json();
+
+  if (!services.length) {
+    adminEmitraServicesList.innerHTML = "<p>No e-Mitra services added yet.</p>";
+    return;
+  }
+
+  adminEmitraServicesList.innerHTML = services.map(service => `
+    <div class="service">
+      <h3>${service.name}</h3>
+      <p><strong>Category:</strong> ${service.category}</p>
+      <p><strong>Documents:</strong> ${service.documents}</p>
+      <p><strong>Fees:</strong> ${service.fees || "Not mentioned"}</p>
+      <p><strong>Processing Time:</strong> ${service.processingTime || "Not mentioned"}</p>
+      <p><strong>Status:</strong> ${service.status}</p>
+      <button onclick="deleteEmitraService(${service.id})">Delete</button>
+    </div>
+  `).join("");
+}
+
+async function deleteEmitraService(id) {
+  const ok = confirm("Delete this e-Mitra service?");
+  if (!ok) return;
+
+  const res = await fetch(`/api/admin/emitra-services/${id}`, {
+    method: "DELETE"
+  });
+
+  const data = await res.json();
+  alert(data.message || "Service deleted");
+
+  loadAdminEmitraServices();
+}
+
+loadAdminEmitraServices();
+</script>
+
+</body>
+</html>
