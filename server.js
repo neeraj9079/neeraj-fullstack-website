@@ -8,6 +8,11 @@ const multer = require('multer');
 
 const app = express();
 app.set('trust proxy', 1);
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 
 const PORT = process.env.PORT || 3000;
@@ -254,27 +259,43 @@ app.get('/api/gallery', (req, res) => {
   res.json(JSON.parse(fs.readFileSync(file, 'utf8')));
 });
 
-app.post('/api/admin/gallery', requireAdmin, upload.single('image'), (req, res) => {
-  const file = path.join(__dirname, 'data', 'gallery.json');
+app.post('/api/admin/gallery', requireAdmin, upload.single('image'), async (req, res) => {
+  try {
+    const file = path.join(__dirname, 'data', 'gallery.json');
 
-  if (!fs.existsSync(file)) {
-    fs.writeFileSync(file, '[]');
+    if (!fs.existsSync(file)) {
+      fs.writeFileSync(file, '[]');
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'Please upload an image' });
+    }
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'neeraj-portfolio-gallery'
+    });
+
+    const gallery = JSON.parse(fs.readFileSync(file, 'utf8'));
+
+    const item = {
+      id: Date.now(),
+      title: req.body.title,
+      image: result.secure_url,
+      description: req.body.description || '',
+      public_id: result.public_id
+    };
+
+    gallery.push(item);
+    fs.writeFileSync(file, JSON.stringify(gallery, null, 2));
+
+    fs.unlinkSync(req.file.path);
+
+    res.json({ message: 'Gallery image uploaded to Cloudinary successfully' });
+
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    res.status(500).json({ message: 'Image upload failed' });
   }
-
-  const gallery = JSON.parse(fs.readFileSync(file, 'utf8'));
-
-  const item = {
-    id: Date.now(),
-    title: req.body.title,
-    image: req.file ? `/uploads/${req.file.filename}` : '',
-    description: req.body.description || ''
-  };
-
-  gallery.push(item);
-
-  fs.writeFileSync(file, JSON.stringify(gallery, null, 2));
-
-  res.json({ message: 'Gallery image uploaded successfully' });
 });
 
 app.delete('/api/admin/gallery/:id', requireAdmin, (req, res) => {
