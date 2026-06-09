@@ -78,6 +78,34 @@ async function logout() {
   window.location.href = 'login.html';
 }
 
+async function loadDashboardStats() {
+  try {
+    const usersRes = await fetch('/api/admin/users');
+    const projectsRes = await fetch('/api/projects');
+    const galleryRes = await fetch('/api/gallery');
+    const messagesRes = await fetch('/api/admin/messages');
+
+    const users = usersRes.ok ? await usersRes.json() : [];
+    const projects = projectsRes.ok ? await projectsRes.json() : [];
+    const gallery = galleryRes.ok ? await galleryRes.json() : [];
+    const messages = messagesRes.ok ? await messagesRes.json() : [];
+
+    const totalUsers = document.getElementById('totalUsers');
+    const adminUsers = document.getElementById('adminUsers');
+    const totalProjects = document.getElementById('totalProjects');
+    const galleryImages = document.getElementById('galleryImages');
+    const contactMessages = document.getElementById('contactMessages');
+
+    if (totalUsers) totalUsers.textContent = users.length;
+    if (adminUsers) adminUsers.textContent = users.filter(user => user.role === 'admin').length;
+    if (totalProjects) totalProjects.textContent = projects.length;
+    if (galleryImages) galleryImages.textContent = gallery.length;
+    if (contactMessages) contactMessages.textContent = messages.length;
+  } catch (error) {
+    console.error('Dashboard stats error:', error);
+  }
+}
+
 async function loadAdminUsers() {
   const usersBody = document.getElementById('usersBody');
 
@@ -110,12 +138,6 @@ async function loadAdminUsers() {
         </td>
       </tr>
     `).join('');
-
-    const totalUsers = document.getElementById('totalUsers');
-    const adminUsers = document.getElementById('adminUsers');
-
-    if (totalUsers) totalUsers.textContent = users.length;
-    if (adminUsers) adminUsers.textContent = users.filter(user => user.role === 'admin').length;
 
   } catch (error) {
     console.error('Admin users error:', error);
@@ -618,6 +640,7 @@ async function deleteUser(id) {
     alert(data.message || "User deleted successfully");
 
     loadAdminUsers();
+    loadDashboardStats();
 
   } catch (err) {
     console.error(err);
@@ -649,3 +672,4 @@ async function deleteMessage(id) {
 
 getMe();
 loadAdminUsers();
+loadDashboardStats();
