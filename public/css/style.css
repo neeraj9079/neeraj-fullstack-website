@@ -765,3 +765,18 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+.admin-layout {
+  align-items: stretch !important;
+}
+
+.admin-sidebar {
+  min-height: calc(100vh - 70px) !important;
+  height: auto !important;
+  overflow-y: auto !important;
+  padding-bottom: 40px !important;
+}
+
+.admin-sidebar a {
+  margin-bottom: 16px !important;
+}
