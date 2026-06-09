@@ -20,7 +20,12 @@ const PORT = process.env.PORT || 3000;
 const USERS_FILE = path.join(__dirname, 'data', 'users.json');
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  connectionTimeout: 20000,
+  greetingTimeout: 20000,
+  socketTimeout: 30000,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
