@@ -6,6 +6,88 @@
 
 <title>e-Mitra Professional Portal | Neeraj.dev</title>
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+.emitra-page {
+  padding: 60px 7%;
+}
+
+.emitra-page h1 {
+  font-size: 34px;
+  margin-bottom: 20px;
+}
+
+.emitra-search {
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 28px;
+  font-size: 16px;
+}
+
+.emitra-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 28px !important;
+}
+
+.emitra-card {
+  background: #fff;
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.07);
+  border: 1px solid #fce7f3;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.emitra-card h3 {
+  color: #db2777;
+  font-size: 22px;
+  margin-bottom: 16px;
+  text-transform: capitalize;
+}
+
+.emitra-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.emitra-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.emitra-actions .btn {
+  width: 220px;
+  text-align: center;
+  margin: 0;
+}
+
+.emitra-actions .btn.secondary {
+  background: #111827;
+  color: #fff;
+}
+
+@media(max-width: 1000px) {
+  .emitra-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media(max-width: 700px) {
+  .emitra-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -23,17 +105,17 @@
   </div>
 </nav>
 
-<section class="section">
+<section class="emitra-page">
   <h1>e-Mitra Professional Portal</h1>
 
   <input
-  type="text"
-  id="serviceSearch"
-  class="emitra-search"
-  placeholder="Search Service..."
->
+    type="text"
+    id="serviceSearch"
+    class="emitra-search"
+    placeholder="Search Service..."
+  >
 
-  <div id="emitraServicesContainer">
+  <div id="emitraServicesContainer" class="emitra-grid">
     <p>Loading Services...</p>
   </div>
 </section>
@@ -52,9 +134,13 @@ async function loadServices() {
     allServices = await res.json();
     renderServices(allServices);
   } catch (err) {
-    console.error(err);
     container.innerHTML = "<p>Unable to load services.</p>";
   }
+}
+
+function shortText(text, limit = 90) {
+  if (!text) return "";
+  return text.length > limit ? text.substring(0, limit) + "..." : text;
 }
 
 function renderServices(services) {
@@ -69,25 +155,20 @@ function renderServices(services) {
     );
 
     return `
-      <div class="service">
+      <div class="emitra-card">
         <h3>${service.name}</h3>
 
-        <p><strong>Category:</strong> ${service.category}</p>
-        <p><strong>Documents:</strong> ${service.documents}</p>
+        <p><strong>Category:</strong> ${service.category || "N/A"}</p>
+        <p><strong>Documents:</strong> ${shortText(service.documents, 70)}</p>
         <p><strong>Fees:</strong> ${service.fees || "N/A"}</p>
         <p><strong>Processing Time:</strong> ${service.processingTime || "N/A"}</p>
-        <p><strong>Status:</strong> ${service.status}</p>
+        <p><strong>Status:</strong> ${service.status || "Active"}</p>
 
-        ${service.description ? `<p>${service.description.substring(0,120)}</p>` : ""}
+        ${service.description ? `<p>${shortText(service.description, 90)}</p>` : ""}
 
-        <div class="emitra-card-actions">
+        <div class="emitra-actions">
           ${service.formPdf ? `
-            <a
-              class="btn secondary"
-              href="${service.formPdf}"
-              target="_blank"
-              download
-            >
+            <a class="btn secondary" href="${service.formPdf}" target="_blank" download>
               📂 Download Form
             </a>
           ` : ""}
@@ -97,7 +178,7 @@ function renderServices(services) {
             target="_blank"
             href="https://wa.me/${WHATSAPP_NUMBER}?text=${message}"
           >
-            📲 Apply on WhatsApp
+            Apply on WhatsApp
           </a>
         </div>
       </div>
@@ -109,9 +190,9 @@ searchBox.addEventListener("input", () => {
   const keyword = searchBox.value.toLowerCase();
 
   const filtered = allServices.filter(service =>
-    service.name.toLowerCase().includes(keyword) ||
-    service.category.toLowerCase().includes(keyword) ||
-    service.documents.toLowerCase().includes(keyword)
+    String(service.name || "").toLowerCase().includes(keyword) ||
+    String(service.category || "").toLowerCase().includes(keyword) ||
+    String(service.documents || "").toLowerCase().includes(keyword)
   );
 
   renderServices(filtered);
