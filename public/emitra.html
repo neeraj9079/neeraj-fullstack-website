@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>e-Mitra Professional Portal | Neeraj.dev</title>
-
 <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -40,6 +39,8 @@
 </section>
 
 <script>
+const WHATSAPP_NUMBER = "91XXXXXXXXXX";
+
 const searchBox = document.getElementById("serviceSearch");
 const container = document.getElementById("emitraServicesContainer");
 
@@ -49,61 +50,46 @@ async function loadServices() {
   try {
     const res = await fetch("/api/emitra-services");
     allServices = await res.json();
-
     renderServices(allServices);
-
   } catch (err) {
     container.innerHTML = "<p>Unable to load services.</p>";
   }
 }
 
 function renderServices(services) {
-
   if (!services.length) {
     container.innerHTML = "<p>No services available.</p>";
     return;
   }
 
-  container.innerHTML = services.map(service => `
-    <div class="service">
+  container.innerHTML = services.map(service => {
+    const message = encodeURIComponent(
+      `Hello Neeraj Ji, I want to apply for ${service.name}. Please guide me.`
+    );
 
-      <h3>${service.name}</h3>
+    return `
+      <div class="service">
+        <h3>${service.name}</h3>
+        <p><strong>Category:</strong> ${service.category}</p>
+        <p><strong>Documents:</strong> ${service.documents}</p>
+        <p><strong>Fees:</strong> ${service.fees || "N/A"}</p>
+        <p><strong>Processing Time:</strong> ${service.processingTime || "N/A"}</p>
+        <p><strong>Status:</strong> ${service.status}</p>
+        <p>${service.description || ""}</p>
 
-      <p>
-        <strong>Category:</strong>
-        ${service.category}
-      </p>
-
-      <p>
-        <strong>Documents:</strong>
-        ${service.documents}
-      </p>
-
-      <p>
-        <strong>Fees:</strong>
-        ${service.fees || "N/A"}
-      </p>
-
-      <p>
-        <strong>Processing Time:</strong>
-        ${service.processingTime || "N/A"}
-      </p>
-
-      <p>
-        <strong>Status:</strong>
-        ${service.status}
-      </p>
-
-      <p>
-        ${service.description || ""}
-      </p>
-
-    </div>
-  `).join("");
+        <a
+          class="btn"
+          target="_blank"
+          href="https://wa.me/${9079209552}?text=${message}"
+        >
+          Apply on WhatsApp
+        </a>
+      </div>
+    `;
+  }).join("");
 }
 
 searchBox.addEventListener("input", () => {
-
   const keyword = searchBox.value.toLowerCase();
 
   const filtered = allServices.filter(service =>
