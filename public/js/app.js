@@ -617,5 +617,27 @@ async function deleteUser(id) {
   }
 }
 
+async function deleteMessage(id) {
+  const confirmDelete = confirm("Are you sure you want to delete this message?");
+
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(`/api/admin/messages/${id}`, {
+      method: "DELETE"
+    });
+
+    const data = await res.json();
+
+    alert(data.message || "Message deleted successfully");
+
+    location.reload();
+
+  } catch (err) {
+    console.error(err);
+    alert("Delete failed");
+  }
+}
+
 getMe();
 loadAdminUsers();
