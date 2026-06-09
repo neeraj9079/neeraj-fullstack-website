@@ -33,7 +33,7 @@
   placeholder="Search Service..."
 >
 
-  <div id="emitraServicesContainer" class="grid">
+  <div id="emitraServicesContainer">
     <p>Loading Services...</p>
   </div>
 </section>
@@ -78,7 +78,7 @@ function renderServices(services) {
         <p><strong>Processing Time:</strong> ${service.processingTime || "N/A"}</p>
         <p><strong>Status:</strong> ${service.status}</p>
 
-        ${service.description ? `<p>${service.description}</p>` : ""}
+        ${service.description ? `<p>${service.description.substring(0,120)}</p>` : ""}
 
         <div class="emitra-card-actions">
           ${service.formPdf ? `
