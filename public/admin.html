@@ -31,22 +31,23 @@
 
   <aside class="admin-sidebar">
     <h3>Admin Panel</h3>
+
     <a href="#dashboard">Dashboard</a>
-    <a href="#home">Home Page</a>
-    <a href="#about">About Page</a>
+    <a href="admin-home.html">Home Admin</a>
+    <a href="admin-about.html">About Admin</a>
     <a href="admin-projects.html">Projects Admin</a>
-    <a href="#resume">Resume</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#settings">Settings</a>
-    <a href="#messages">Messages</a>
-    <a href="#users">Users</a>
+    <a href="admin-resume.html">Resume Admin</a>
+    <a href="admin-gallery.html">Gallery Admin</a>
+    <a href="admin-settings.html">Settings Admin</a>
+    <a href="admin-messages.html">Messages Admin</a>
+    <a href="admin-users.html">Users Admin</a>
   </aside>
 
   <main class="admin-main">
 
     <section id="dashboard" class="admin-section">
       <h1>Admin Dashboard</h1>
-      <p>Manage website content, users, projects, gallery, resume and messages.</p>
+      <p>Manage website content from separate admin pages.</p>
 
       <div id="userStatus" class="admin-status"></div>
 
@@ -81,80 +82,6 @@
           <p>Online ✅</p>
         </div>
       </div>
-    </section>
-
-    <section id="home" class="admin-section">
-      <h2>Manage Home Page</h2>
-      <form id="homeForm" class="admin-form">
-        <input type="text" id="homeTitle" placeholder="Home Title" required />
-        <input type="text" id="homeSubtitle" placeholder="Home Subtitle" required />
-        <button type="submit">Save Home Page</button>
-      </form>
-    </section>
-
-    <section id="about" class="admin-section">
-      <h2>Manage About Page</h2>
-      <form id="aboutForm" class="admin-form">
-        <textarea id="aboutContent" placeholder="About Content" required></textarea>
-        <button type="submit">Save About Page</button>
-      </form>
-    </section>
-
-    
-    <section id="resume" class="admin-section">
-      <h2>Resume Manager</h2>
-      <form id="resumeForm" class="admin-form" enctype="multipart/form-data">
-        <input type="file" id="resumeFile" name="resume" accept="application/pdf" required />
-        <button type="submit">Upload Resume PDF</button>
-      </form>
-      <div id="adminResumeStatus" class="admin-status"></div>
-    </section>
-
-    <section id="gallery" class="admin-section">
-      <h2>Manage Gallery</h2>
-      <form id="galleryForm" class="admin-form" enctype="multipart/form-data">
-        <input type="text" id="galleryTitle" name="title" placeholder="Gallery Title" required />
-        <input type="file" id="galleryImage" name="image" accept="image/*" required />
-        <textarea id="galleryDescription" name="description" placeholder="Description"></textarea>
-        <button type="submit">Upload Gallery Image</button>
-      </form>
-      <div id="adminGalleryList" class="admin-list"></div>
-    </section>
-
-    <section id="settings" class="admin-section">
-      <h2>Website Settings</h2>
-      <form id="settingsForm" class="admin-form">
-        <input type="text" id="siteLogo" placeholder="Logo Text" />
-        <input type="text" id="logoImage" placeholder="Logo Image URL e.g. images/logo.png" />
-        <input type="text" id="footerText" placeholder="Footer Text" />
-        <input type="text" id="whatsappNumber" placeholder="WhatsApp Number" />
-        <input type="email" id="siteEmail" placeholder="Email" />
-        <input type="url" id="githubLink" placeholder="GitHub Link" />
-        <input type="url" id="linkedinLink" placeholder="LinkedIn Link" />
-        <input type="url" id="instagramLink" placeholder="Instagram Link" />
-        <button type="submit">Save Settings</button>
-      </form>
-    </section>
-
-    <section id="messages" class="admin-section">
-      <h2>Contact Messages</h2>
-      <div id="adminMessagesList" class="admin-list"></div>
-    </section>
-
-    <section id="users" class="admin-section">
-      <h2>Registered Users</h2>
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="usersBody"></tbody>
-      </table>
     </section>
 
   </main>
