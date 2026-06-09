@@ -410,8 +410,10 @@ if (resumeForm) {
 const contactForm = document.getElementById("contactForm");
 
 if (contactForm) {
-  contactForm.addEventListener("submit", function (e) {
+  contactForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    alert("Sending message...");
 
     const body = {
       name: document.getElementById("contactName").value,
@@ -421,23 +423,32 @@ if (contactForm) {
       message: document.getElementById("contactMessage").value
     };
 
-    fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    })
-      .then(function (res) {
-        return res.json();
-      })
-      .then(function (data) {
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      let data = {};
+
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
+
+      if (res.ok) {
         alert(data.message || "Message sent successfully");
         contactForm.reset();
-      })
-      .catch(function (error) {
-        console.error("Contact error:", error);
-        alert("Message sent successfully");
-        contactForm.reset();
-      });
+      } else {
+        alert(data.message || "Message failed. Please try again.");
+      }
+
+    } catch (error) {
+      console.error("Contact error:", error);
+      alert("Network error. Please try again.");
+    }
   });
 }
 
