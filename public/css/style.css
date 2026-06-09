@@ -780,3 +780,19 @@ textarea {
 .admin-sidebar a {
   margin-bottom: 16px !important;
 }
+
+select {
+  width: 100%;
+  padding: 13px;
+  margin: 10px 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  background: white;
+}
+
+select:focus {
+  border-color: #db2777;
+  box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.12);
+}

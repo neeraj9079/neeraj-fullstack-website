@@ -31,7 +31,17 @@
 
       <form id="emitraServiceForm" class="admin-form">
         <input type="text" id="emitraName" placeholder="Service Name" required>
-        <input type="text" id="emitraCategory" placeholder="Category e.g. Certificates" required>
+        <select id="emitraCategory" required>
+  <option value="">Select Category</option>
+
+  <option value="Certificates">Certificates</option>
+  <option value="Identity Services">Identity Services</option>
+  <option value="Rajasthan Services">Rajasthan Services</option>
+  <option value="Utility Services">Utility Services</option>
+  <option value="Banking Services">Banking Services</option>
+  <option value="Education Services">Education Services</option>
+  <option value="Government Schemes">Government Schemes</option>
+</select>
         <textarea id="emitraDocuments" placeholder="Required Documents, comma separated" required></textarea>
         <input type="text" id="emitraFees" placeholder="Fees e.g. ₹50">
         <input type="text" id="emitraProcessingTime" placeholder="Processing Time e.g. 3-7 Days">
