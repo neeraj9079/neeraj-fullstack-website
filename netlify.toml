@@ -1,2 +1,20 @@
 [build]
   publish = "public"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://neeraj-fullstack-website.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/admin-neeraj-9079"
+  to = "https://neeraj-fullstack-website.onrender.com/admin-neeraj-9079"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/dashboard"
+  to = "https://neeraj-fullstack-website.onrender.com/dashboard"
+  status = 302
+  force = true
