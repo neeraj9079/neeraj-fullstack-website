@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+const brevo = require("@getbrevo/brevo");
 const express = require("express");
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
@@ -19,18 +19,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 60000,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+const brevoClient = new brevo.TransactionalEmailsApi();
+brevoClient.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -52,14 +45,14 @@ app.use(express.static(path.join(__dirname, "public")));
 const uploadsDir = path.join(__dirname, "public", "uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname.replace(/\s+/g, "-"));
-  }
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadsDir),
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + "-" + file.originalname.replace(/\s+/g, "-"));
+    }
+  })
 });
-
-const upload = multer({ storage });
 
 function ensureDataFile(filePath, defaultData) {
   if (!fs.existsSync(filePath)) {
@@ -105,7 +98,6 @@ function requireAdmin(req, res, next) {
 app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -116,18 +108,17 @@ app.post("/api/register", async (req, res) => {
       return res.status(409).json({ message: "Email already registered" });
     }
 
-    const user = {
+    users.push({
       id: Date.now(),
       name,
       email,
       password: await bcrypt.hash(password, 10),
       role: users.length === 0 ? "admin" : "user"
-    };
+    });
 
-    users.push(user);
     saveUsers(users);
-
     res.json({ message: "Registered successfully. First user becomes admin." });
+
   } catch (error) {
     console.error("REGISTER ERROR:", error);
     res.status(500).json({ message: "Register failed" });
@@ -137,19 +128,13 @@ app.post("/api/register", async (req, res) => {
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const users = readUsers();
     const user = users.find(u => u.email === email);
 
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+    if (!user) return res.status(401).json({ message: "Invalid email or password" });
 
     const ok = await bcrypt.compare(password, user.password);
-
-    if (!ok) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+    if (!ok) return res.status(401).json({ message: "Invalid email or password" });
 
     req.session.user = {
       id: user.id,
@@ -159,6 +144,7 @@ app.post("/api/login", async (req, res) => {
     };
 
     res.json({ message: "Login successful", role: user.role });
+
   } catch (error) {
     console.error("LOGIN ERROR:", error);
     res.status(500).json({ message: "Server login error" });
@@ -189,44 +175,38 @@ app.get("/api/admin/users", requireAdmin, (req, res) => {
 
 app.delete("/api/admin/users/:id", requireAdmin, (req, res) => {
   const users = readUsers();
-  const updatedUsers = users.filter(user => String(user.id) !== String(req.params.id));
-  saveUsers(updatedUsers);
+  saveUsers(users.filter(user => String(user.id) !== String(req.params.id)));
   res.json({ message: "User deleted successfully" });
 });
 
 /* HOME */
 app.get("/api/home", (req, res) => {
-  const file = path.join(__dirname, "data", "home.json");
-  res.json(readJson(file, {
+  res.json(readJson(path.join(__dirname, "data", "home.json"), {
     title: "Neeraj Swami",
     subtitle: "Full Stack Developer | IT Support Assistant"
   }));
 });
 
 app.post("/api/admin/home", requireAdmin, (req, res) => {
-  const file = path.join(__dirname, "data", "home.json");
-  writeJson(file, req.body);
+  writeJson(path.join(__dirname, "data", "home.json"), req.body);
   res.json({ message: "Home page updated successfully" });
 });
 
 /* ABOUT */
 app.get("/api/about", (req, res) => {
-  const file = path.join(__dirname, "data", "about.json");
-  res.json(readJson(file, {
+  res.json(readJson(path.join(__dirname, "data", "about.json"), {
     content: "My name is Neeraj Swami. I have 4 years of experience in e-Mitra services and IT Support."
   }));
 });
 
 app.post("/api/admin/about", requireAdmin, (req, res) => {
-  const file = path.join(__dirname, "data", "about.json");
-  writeJson(file, req.body);
+  writeJson(path.join(__dirname, "data", "about.json"), req.body);
   res.json({ message: "About page updated successfully" });
 });
 
 /* PROJECTS */
 app.get("/api/projects", (req, res) => {
-  const file = path.join(__dirname, "data", "projects.json");
-  res.json(readJson(file, []));
+  res.json(readJson(path.join(__dirname, "data", "projects.json"), []));
 });
 
 app.post("/api/admin/projects", requireAdmin, (req, res) => {
@@ -248,16 +228,13 @@ app.post("/api/admin/projects", requireAdmin, (req, res) => {
 app.delete("/api/admin/projects/:id", requireAdmin, (req, res) => {
   const file = path.join(__dirname, "data", "projects.json");
   const projects = readJson(file, []);
-  const updated = projects.filter(p => String(p.id) !== String(req.params.id));
-
-  writeJson(file, updated);
+  writeJson(file, projects.filter(p => String(p.id) !== String(req.params.id)));
   res.json({ message: "Project deleted successfully" });
 });
 
 /* GALLERY */
 app.get("/api/gallery", (req, res) => {
-  const file = path.join(__dirname, "data", "gallery.json");
-  res.json(readJson(file, []));
+  res.json(readJson(path.join(__dirname, "data", "gallery.json"), []));
 });
 
 app.post("/api/admin/gallery", requireAdmin, upload.single("image"), async (req, res) => {
@@ -287,6 +264,7 @@ app.post("/api/admin/gallery", requireAdmin, upload.single("image"), async (req,
     if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
     res.json({ message: "Gallery image uploaded to Cloudinary successfully" });
+
   } catch (error) {
     console.error("Cloudinary upload error:", error);
     res.status(500).json({ message: "Image upload failed" });
@@ -307,10 +285,9 @@ app.delete("/api/admin/gallery/:id", requireAdmin, async (req, res) => {
       }
     }
 
-    const updated = gallery.filter(g => String(g.id) !== String(req.params.id));
-    writeJson(file, updated);
-
+    writeJson(file, gallery.filter(g => String(g.id) !== String(req.params.id)));
     res.json({ message: "Gallery item deleted successfully" });
+
   } catch (error) {
     console.error("Gallery delete error:", error);
     res.status(500).json({ message: "Gallery item delete failed" });
@@ -319,44 +296,43 @@ app.delete("/api/admin/gallery/:id", requireAdmin, async (req, res) => {
 
 /* RESUME */
 app.get("/api/resume", (req, res) => {
-  const file = path.join(__dirname, "data", "resume.json");
-  res.json(readJson(file, { resume: "" }));
+  res.json(readJson(path.join(__dirname, "data", "resume.json"), { resume: "" }));
 });
 
 app.post("/api/admin/resume", requireAdmin, upload.single("resume"), (req, res) => {
-  const file = path.join(__dirname, "data", "resume.json");
-
-  writeJson(file, {
+  writeJson(path.join(__dirname, "data", "resume.json"), {
     resume: req.file ? `/uploads/${req.file.filename}` : ""
   });
 
   res.json({ message: "Resume uploaded successfully" });
 });
 
-// /* EMAIL BACKGROUND */
-// async function sendContactEmails(message) {
-//   try {
-//     await transporter.sendMail({
-//       from: process.env.EMAIL_USER,
-//       to: message.email,
-//       subject: "Thank You For Contacting Neeraj Swami",
-//       html: `
-//         <h2>Thank You!</h2>
-//         <p>Dear ${message.name},</p>
-//         <p>Your message has been received successfully. I will contact you soon.</p>
-//         <p>Regards,<br>Neeraj Swami</p>
-//       `
-//     });
-  } catch (err) {
-    console.error("User Email Error:", err.message);
-  }
-
+/* EMAIL */
+async function sendContactEmails(message) {
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
+    await brevoClient.sendTransacEmail({
+      sender: {
+        name: "Neeraj Swami",
+        email: process.env.EMAIL_USER
+      },
+      to: [{ email: message.email, name: message.name }],
+      subject: "Thank You For Contacting Neeraj Swami",
+      htmlContent: `
+        <h2>Thank You!</h2>
+        <p>Dear ${message.name},</p>
+        <p>Your message has been received successfully. I will contact you soon.</p>
+        <p>Regards,<br>Neeraj Swami</p>
+      `
+    });
+
+    await brevoClient.sendTransacEmail({
+      sender: {
+        name: "Neeraj Portfolio",
+        email: process.env.EMAIL_USER
+      },
+      to: [{ email: process.env.EMAIL_USER, name: "Neeraj Swami" }],
       subject: "New Contact Message - Portfolio Website",
-      html: `
+      htmlContent: `
         <h2>New Contact Message</h2>
         <p><strong>Name:</strong> ${message.name}</p>
         <p><strong>Email:</strong> ${message.email}</p>
@@ -366,8 +342,9 @@ app.post("/api/admin/resume", requireAdmin, upload.single("resume"), (req, res) 
         <p><strong>Date:</strong> ${message.date}</p>
       `
     });
+
   } catch (err) {
-    console.error("Admin Email Error:", err.message);
+    console.error("Brevo Email Error:", err.response?.body || err.message);
   }
 }
 
@@ -393,6 +370,7 @@ app.post("/api/contact", (req, res) => {
     res.json({ message: "Message sent successfully" });
 
     sendContactEmails(message);
+
   } catch (error) {
     console.error("CONTACT ERROR:", error);
     res.status(500).json({ message: "Message failed" });
@@ -400,16 +378,13 @@ app.post("/api/contact", (req, res) => {
 });
 
 app.get("/api/admin/messages", requireAdmin, (req, res) => {
-  const file = path.join(__dirname, "data", "messages.json");
-  res.json(readJson(file, []));
+  res.json(readJson(path.join(__dirname, "data", "messages.json"), []));
 });
 
 app.delete("/api/admin/messages/:id", requireAdmin, (req, res) => {
   const file = path.join(__dirname, "data", "messages.json");
   const messages = readJson(file, []);
-  const updated = messages.filter(msg => String(msg.id) !== String(req.params.id));
-
-  writeJson(file, updated);
+  writeJson(file, messages.filter(msg => String(msg.id) !== String(req.params.id)));
   res.json({ message: "Message deleted successfully" });
 });
 
@@ -424,7 +399,6 @@ app.get("/api/visitor-count", (req, res) => {
   });
 
   const today = new Date().toLocaleDateString();
-
   data.totalVisitors += 1;
 
   if (data.lastVisitDate !== today) {
@@ -439,9 +413,7 @@ app.get("/api/visitor-count", (req, res) => {
 });
 
 app.get("/api/admin/visitor-stats", requireAdmin, (req, res) => {
-  const file = path.join(__dirname, "data", "visitors.json");
-
-  res.json(readJson(file, {
+  res.json(readJson(path.join(__dirname, "data", "visitors.json"), {
     totalVisitors: 0,
     todayVisitors: 0,
     lastVisitDate: ""
@@ -450,9 +422,7 @@ app.get("/api/admin/visitor-stats", requireAdmin, (req, res) => {
 
 /* SETTINGS */
 app.get("/api/settings", (req, res) => {
-  const file = path.join(__dirname, "data", "settings.json");
-
-  res.json(readJson(file, {
+  res.json(readJson(path.join(__dirname, "data", "settings.json"), {
     logo: "Neeraj.dev",
     footer: "© 2026 Neeraj Swami. All Rights Reserved.",
     whatsapp: "",
@@ -464,8 +434,7 @@ app.get("/api/settings", (req, res) => {
 });
 
 app.post("/api/admin/settings", requireAdmin, (req, res) => {
-  const file = path.join(__dirname, "data", "settings.json");
-  writeJson(file, req.body);
+  writeJson(path.join(__dirname, "data", "settings.json"), req.body);
   res.json({ message: "Website settings updated successfully" });
 });
 
