@@ -13,8 +13,8 @@ const USERS_FILE = path.join(__dirname, 'data', 'users.json');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'swamineeraj642@gmail.com',
-    pass: 'vgyptirjazobueck'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
@@ -22,9 +22,15 @@ const transporter = nodemailer.createTransport({
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(session({
-  secret: 'neeraj-super-secret-key-2026-portfolio',
+  secret: process.env.SESSION_SECRET || 'temporary-dev-secret',
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 const uploadsDir = path.join(__dirname, 'public', 'uploads');
