@@ -11,6 +11,7 @@ app.set("trust proxy", 1);
 
 const PORT = process.env.PORT || 3000;
 const USERS_FILE = path.join(__dirname, "data", "users.json");
+const EMITRA_FILE = path.join(__dirname, "data", "emitra-services.json");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -457,6 +458,48 @@ app.get("/api/settings", (req, res) => {
 app.post("/api/admin/settings", requireAdmin, (req, res) => {
   writeJson(path.join(__dirname, "data", "settings.json"), req.body);
   res.json({ message: "Website settings updated successfully" });
+});
+
+/* EMITRA SERVICES */
+
+app.get("/api/emitra-services", (req, res) => {
+  res.json(readJson(EMITRA_FILE, []));
+});
+
+app.post("/api/admin/emitra-services", requireAdmin, (req, res) => {
+  const services = readJson(EMITRA_FILE, []);
+
+  services.push({
+    id: Date.now(),
+    name: req.body.name,
+    category: req.body.category,
+    documents: req.body.documents || "",
+    fees: req.body.fees || "",
+    processingTime: req.body.processingTime || "",
+    description: req.body.description || "",
+    status: req.body.status || "Active"
+  });
+
+  writeJson(EMITRA_FILE, services);
+
+  res.json({
+    message: "e-Mitra Service Added Successfully"
+  });
+});
+
+app.delete("/api/admin/emitra-services/:id", requireAdmin, (req, res) => {
+  const services = readJson(EMITRA_FILE, []);
+
+  writeJson(
+    EMITRA_FILE,
+    services.filter(
+      service => String(service.id) !== String(req.params.id)
+    )
+  );
+
+  res.json({
+    message: "e-Mitra Service Deleted Successfully"
+  });
 });
 
 app.listen(PORT, () => {
