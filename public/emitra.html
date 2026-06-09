@@ -27,11 +27,11 @@
   <h1>e-Mitra Professional Portal</h1>
 
   <input
-    type="text"
-    id="serviceSearch"
-    placeholder="Search Service..."
-    style="width:100%;padding:15px;border-radius:12px;margin-bottom:20px;"
-  >
+  type="text"
+  id="serviceSearch"
+  class="emitra-search"
+  placeholder="Search Service..."
+>
 
   <div id="emitraServicesContainer" class="grid">
     <p>Loading Services...</p>
@@ -80,7 +80,7 @@ function renderServices(services) {
 
         ${service.description ? `<p>${service.description}</p>` : ""}
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;">
+        <div class="emitra-card-actions">
           ${service.formPdf ? `
             <a
               class="btn secondary"
