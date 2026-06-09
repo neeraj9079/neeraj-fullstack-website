@@ -1,4 +1,3 @@
-const brevo = require("@getbrevo/brevo");
 const express = require("express");
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
@@ -18,12 +17,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
-
-const brevoClient = new brevo.TransactionalEmailsApi();
-brevoClient.setApiKey(
-  brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY
-);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -98,6 +91,7 @@ function requireAdmin(req, res, next) {
 app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -307,10 +301,33 @@ app.post("/api/admin/resume", requireAdmin, upload.single("resume"), (req, res) 
   res.json({ message: "Resume uploaded successfully" });
 });
 
-/* EMAIL */
+/* BREVO EMAIL API */
+async function sendBrevoEmail(payload) {
+  if (!process.env.BREVO_API_KEY) {
+    throw new Error("BREVO_API_KEY missing");
+  }
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "api-key": process.env.BREVO_API_KEY,
+      "content-type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText);
+  }
+
+  return response.json();
+}
+
 async function sendContactEmails(message) {
   try {
-    await brevoClient.sendTransacEmail({
+    await sendBrevoEmail({
       sender: {
         name: "Neeraj Swami",
         email: process.env.EMAIL_USER
@@ -325,7 +342,7 @@ async function sendContactEmails(message) {
       `
     });
 
-    await brevoClient.sendTransacEmail({
+    await sendBrevoEmail({
       sender: {
         name: "Neeraj Portfolio",
         email: process.env.EMAIL_USER
@@ -344,7 +361,7 @@ async function sendContactEmails(message) {
     });
 
   } catch (err) {
-    console.error("Brevo Email Error:", err.response?.body || err.message);
+    console.error("Brevo Email Error:", err.message);
   }
 }
 
