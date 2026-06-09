@@ -31,7 +31,7 @@
 
       <input type="hidden" id="editingServiceId">
 
-      <form id="emitraServiceForm" class="admin-form">
+      <form id="emitraServiceForm" class="admin-form" enctype="multipart/form-data">
         <input type="text" id="emitraName" placeholder="Service Name" required>
 
         <select id="emitraCategory" required>
@@ -49,6 +49,9 @@
         <input type="text" id="emitraFees" placeholder="Fees e.g. ₹50">
         <input type="text" id="emitraProcessingTime" placeholder="Processing Time e.g. 3-7 Days">
         <textarea id="emitraDescription" placeholder="Service Description"></textarea>
+
+        <input type="text" id="emitraFormName" placeholder="Form Name e.g. Income Certificate Form">
+        <input type="file" id="emitraFormPdf" accept="application/pdf">
 
         <select id="emitraStatus">
           <option value="Active">Active</option>
@@ -78,15 +81,22 @@ emitraServiceForm.addEventListener("submit", async function(e) {
 
   const editingId = document.getElementById("editingServiceId").value;
 
-  const body = {
-    name: document.getElementById("emitraName").value,
-    category: document.getElementById("emitraCategory").value,
-    documents: document.getElementById("emitraDocuments").value,
-    fees: document.getElementById("emitraFees").value,
-    processingTime: document.getElementById("emitraProcessingTime").value,
-    description: document.getElementById("emitraDescription").value,
-    status: document.getElementById("emitraStatus").value
-  };
+  const formData = new FormData();
+
+  formData.append("name", document.getElementById("emitraName").value);
+  formData.append("category", document.getElementById("emitraCategory").value);
+  formData.append("documents", document.getElementById("emitraDocuments").value);
+  formData.append("fees", document.getElementById("emitraFees").value);
+  formData.append("processingTime", document.getElementById("emitraProcessingTime").value);
+  formData.append("description", document.getElementById("emitraDescription").value);
+  formData.append("formName", document.getElementById("emitraFormName").value);
+  formData.append("status", document.getElementById("emitraStatus").value);
+
+  const pdfFile = document.getElementById("emitraFormPdf").files[0];
+
+  if (pdfFile) {
+    formData.append("formPdf", pdfFile);
+  }
 
   const url = editingId
     ? `/api/admin/emitra-services/${editingId}`
@@ -96,10 +106,7 @@ emitraServiceForm.addEventListener("submit", async function(e) {
 
   const res = await fetch(url, {
     method,
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
+    body: formData
   });
 
   const data = await res.json();
@@ -131,6 +138,15 @@ async function loadAdminEmitraServices() {
       <p><strong>Processing Time:</strong> ${service.processingTime || "Not mentioned"}</p>
       <p><strong>Status:</strong> ${service.status}</p>
 
+      ${service.formPdf ? `
+        <p>
+          <strong>Form:</strong>
+          <a href="${service.formPdf}" target="_blank">
+            ${service.formName || "Download Form"}
+          </a>
+        </p>
+      ` : ""}
+
       <button onclick="editEmitraService(${service.id})">Edit</button>
       <button onclick="deleteEmitraService(${service.id})">Delete</button>
     </div>
@@ -152,6 +168,7 @@ function editEmitraService(id) {
   document.getElementById("emitraFees").value = service.fees || "";
   document.getElementById("emitraProcessingTime").value = service.processingTime || "";
   document.getElementById("emitraDescription").value = service.description || "";
+  document.getElementById("emitraFormName").value = service.formName || "";
   document.getElementById("emitraStatus").value = service.status || "Active";
 
   emitraSubmitBtn.textContent = "Update e-Mitra Service";

@@ -23,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(session({
+  name: "neeraj_session",
   secret: process.env.SESSION_SECRET || "temporary-dev-secret",
   resave: false,
   saveUninitialized: false,
@@ -410,7 +411,7 @@ app.delete("/api/admin/messages/:id", requireAdmin, (req, res) => {
   res.json({ message: "Message deleted successfully" });
 });
 
-app.put("/api/admin/emitra-services/:id", requireAdmin, (req, res) => {
+app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf"), (req, res) => {
   const services = readJson(EMITRA_FILE, []);
 
   const updatedServices = services.map(service => {
@@ -423,12 +424,21 @@ app.put("/api/admin/emitra-services/:id", requireAdmin, (req, res) => {
         fees: req.body.fees || "",
         processingTime: req.body.processingTime || "",
         description: req.body.description || "",
-        status: req.body.status || "Active"
+        status: req.body.status || "Active",
+        formName: req.body.formName || service.formName || "",
+        formPdf: req.file ? `/uploads/${req.file.filename}` : service.formPdf || ""
       };
     }
 
     return service;
   });
+
+  writeJson(EMITRA_FILE, updatedServices);
+
+  res.json({
+    message: "e-Mitra Service Updated Successfully"
+  });
+});
 
   writeJson(EMITRA_FILE, updatedServices);
 
@@ -493,7 +503,7 @@ app.get("/api/emitra-services", (req, res) => {
   res.json(readJson(EMITRA_FILE, []));
 });
 
-app.post("/api/admin/emitra-services", requireAdmin, (req, res) => {
+app.post("/api/admin/emitra-services", requireAdmin, upload.single("formPdf"), (req, res) => {
   const services = readJson(EMITRA_FILE, []);
 
   services.push({
@@ -504,7 +514,9 @@ app.post("/api/admin/emitra-services", requireAdmin, (req, res) => {
     fees: req.body.fees || "",
     processingTime: req.body.processingTime || "",
     description: req.body.description || "",
-    status: req.body.status || "Active"
+    status: req.body.status || "Active",
+    formName: req.body.formName || "",
+    formPdf: req.file ? `/uploads/${req.file.filename}` : ""
   });
 
   writeJson(EMITRA_FILE, services);
