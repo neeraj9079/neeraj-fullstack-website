@@ -7,8 +7,8 @@ const path = require('path');
 const multer = require('multer');
 
 const app = express();
-
 app.set('trust proxy', 1);
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -89,14 +89,38 @@ app.post('/api/register', async (req, res) => {
 });
 
 app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-  const users = readUsers();
-  const user = users.find(u => u.email === email);
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ message: 'Invalid email or password' });
+  try {
+    const { email, password } = req.body;
+
+    const users = readUsers();
+    const user = users.find(u => u.email === email);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const ok = await bcrypt.compare(password, user.password);
+
+    if (!ok) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+
+    return res.json({
+      message: 'Login successful',
+      role: user.role
+    });
+
+  } catch (error) {
+    console.error('LOGIN ERROR:', error);
+    return res.status(500).json({ message: 'Server login error' });
   }
-  req.session.user = { id: user.id, name: user.name, email: user.email, role: user.role };
-  res.json({ message: 'Login successful', role: user.role });
 });
 
 app.get('/api/me', (req, res) => res.json({ user: req.session.user || null }));
