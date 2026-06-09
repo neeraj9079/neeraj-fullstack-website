@@ -39,7 +39,7 @@
 </section>
 
 <script>
-const WHATSAPP_NUMBER = "91XXXXXXXXXX";
+const WHATSAPP_NUMBER = "919079209552";
 
 const searchBox = document.getElementById("serviceSearch");
 const container = document.getElementById("emitraServicesContainer");
@@ -52,6 +52,7 @@ async function loadServices() {
     allServices = await res.json();
     renderServices(allServices);
   } catch (err) {
+    console.error(err);
     container.innerHTML = "<p>Unable to load services.</p>";
   }
 }
@@ -70,26 +71,35 @@ function renderServices(services) {
     return `
       <div class="service">
         <h3>${service.name}</h3>
+
         <p><strong>Category:</strong> ${service.category}</p>
         <p><strong>Documents:</strong> ${service.documents}</p>
         <p><strong>Fees:</strong> ${service.fees || "N/A"}</p>
         <p><strong>Processing Time:</strong> ${service.processingTime || "N/A"}</p>
         <p><strong>Status:</strong> ${service.status}</p>
-        <p>${service.description || ""}</p>
 
-        ${service.formPdf ? `
-  <a class="btn secondary" href="${service.formPdf}" target="_blank" download>
-    📂 Download Form
-  </a>
-` : ""}
+        ${service.description ? `<p>${service.description}</p>` : ""}
 
-        <a
-          class="btn"
-          target="_blank"
-          href="https://wa.me/919079209552?text=${message}"
-        >
-          Apply on WhatsApp
-        </a>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px;">
+          ${service.formPdf ? `
+            <a
+              class="btn secondary"
+              href="${service.formPdf}"
+              target="_blank"
+              download
+            >
+              📂 Download Form
+            </a>
+          ` : ""}
+
+          <a
+            class="btn"
+            target="_blank"
+            href="https://wa.me/${WHATSAPP_NUMBER}?text=${message}"
+          >
+            📲 Apply on WhatsApp
+          </a>
+        </div>
       </div>
     `;
   }).join("");
@@ -100,7 +110,8 @@ searchBox.addEventListener("input", () => {
 
   const filtered = allServices.filter(service =>
     service.name.toLowerCase().includes(keyword) ||
-    service.category.toLowerCase().includes(keyword)
+    service.category.toLowerCase().includes(keyword) ||
+    service.documents.toLowerCase().includes(keyword)
   );
 
   renderServices(filtered);
