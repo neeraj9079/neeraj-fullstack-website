@@ -77,6 +77,12 @@ function renderServices(services) {
         <p><strong>Status:</strong> ${service.status}</p>
         <p>${service.description || ""}</p>
 
+        ${service.formPdf ? `
+  <a class="btn secondary" href="${service.formPdf}" target="_blank" download>
+    📂 Download Form
+  </a>
+` : ""}
+
         <a
           class="btn"
           target="_blank"
