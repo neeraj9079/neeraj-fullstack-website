@@ -525,6 +525,45 @@ app.post("/api/admin/settings", requireAdmin, (req, res) => {
   res.json({ message: "Website settings updated successfully" });
 });
 
+/* VISITOR ANALYTICS */
+const ANALYTICS_FILE = path.join(__dirname, "data", "analytics.json");
+
+app.post("/api/track-visitor", (req, res) => {
+  try {
+    const visits = readJson(ANALYTICS_FILE, []);
+
+    visits.push({
+      id: Date.now(),
+      page: req.body.page || "Unknown",
+      referrer: req.body.referrer || "Direct",
+      userAgent: req.headers["user-agent"] || "",
+      ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress || "",
+      date: new Date().toISOString()
+    });
+
+    writeJson(ANALYTICS_FILE, visits);
+
+    res.json({ success: true, message: "Visitor tracked" });
+  } catch (error) {
+    console.error("VISITOR TRACK ERROR:", error);
+    res.status(500).json({ success: false, message: "Visitor tracking failed" });
+  }
+});
+
+app.get("/api/admin/analytics", requireAdmin, (req, res) => {
+  try {
+    const visits = readJson(ANALYTICS_FILE, []);
+
+    res.json({
+      totalVisits: visits.length,
+      recentVisits: visits.slice(-100).reverse()
+    });
+  } catch (error) {
+    console.error("ANALYTICS ERROR:", error);
+    res.status(500).json({ message: "Analytics loading failed" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Website running at http://localhost:${PORT}`);
 });

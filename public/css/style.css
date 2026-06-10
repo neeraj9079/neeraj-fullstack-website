@@ -796,3 +796,18 @@ select:focus {
   border-color: #db2777;
   box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.12);
 }
+
+
+.project-click-card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.project-click-card .project {
+  height: 100%;
+}
+
+.project-click-card:hover .project {
+  transform: translateY(-5px);
+}
