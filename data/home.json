@@ -1,4 +1,11 @@
 {
+  "tagline": "IT Support • e-Mitra • Web Development",
   "title": "hello my name is neeraj swami",
-  "subtitle": "hello word i will see you any time"
+  "subtitle": "hello word i will see you any time\nhello word i will see you any time",
+  "currentWork": "IT Support Assistant at NHAI",
+  "skills": "Python, HTML, CSS, JavaScript, Node.js, SQL, FastAPI, Flask, MySQL",
+  "whatIDo": "I provide practical solutions in IT support, e-Mitra services, government documentation, frontend development, backend development, database handling, and admin panel development.",
+  "projectBtn": "View Projects",
+  "hireBtn": "Hire Me",
+  "highlights": "4+ Years Experience|Practical experience in e-Mitra services, online applications and documentation support.\nIT Support Assistant|Working with IT support tasks, troubleshooting, computer operations and technical assistance.\nFull Stack Learning|Building skills in Python, JavaScript, Node.js, SQL, HTML, CSS, Flask, FastAPI and databases."
 }

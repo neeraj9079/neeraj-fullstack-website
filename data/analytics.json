@@ -678,5 +678,101 @@
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
     "ip": "::1",
     "date": "2026-06-10T09:10:10.366Z"
+  },
+  {
+    "id": 1781084235292,
+    "page": "/",
+    "referrer": "Direct",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:37:15.293Z"
+  },
+  {
+    "id": 1781084238012,
+    "page": "/login.html",
+    "referrer": "http://localhost:3000/",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:37:18.012Z"
+  },
+  {
+    "id": 1781084244897,
+    "page": "/admin-neeraj-9079",
+    "referrer": "http://localhost:3000/login.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:37:24.897Z"
+  },
+  {
+    "id": 1781084291473,
+    "page": "/admin.html",
+    "referrer": "http://localhost:3000/admin-home.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:11.473Z"
+  },
+  {
+    "id": 1781084293060,
+    "page": "/index.html",
+    "referrer": "http://localhost:3000/admin.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:13.060Z"
+  },
+  {
+    "id": 1781084298175,
+    "page": "/index.html",
+    "referrer": "http://localhost:3000/index.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:18.175Z"
+  },
+  {
+    "id": 1781084299858,
+    "page": "/about.html",
+    "referrer": "http://localhost:3000/index.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:19.858Z"
+  },
+  {
+    "id": 1781084301589,
+    "page": "/projects.html",
+    "referrer": "http://localhost:3000/about.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:21.589Z"
+  },
+  {
+    "id": 1781084302893,
+    "page": "/gallery.html",
+    "referrer": "http://localhost:3000/projects.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:22.893Z"
+  },
+  {
+    "id": 1781084304815,
+    "page": "/resume.html",
+    "referrer": "http://localhost:3000/gallery.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:24.815Z"
+  },
+  {
+    "id": 1781084306762,
+    "page": "/hire.html",
+    "referrer": "http://localhost:3000/resume.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:26.762Z"
+  },
+  {
+    "id": 1781084308307,
+    "page": "/contact.html",
+    "referrer": "http://localhost:3000/hire.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T09:38:28.307Z"
   }
 ]
