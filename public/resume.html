@@ -28,6 +28,114 @@
   <meta name="description" content="Professional resume of Neeraj Swami - IT Support Assistant, e-Mitra Expert, and Full Stack Developer.">
 
   <link rel="stylesheet" href="css/style.css">
+  <style>
+.resume-page{
+  background:#fff7fb;
+  padding:60px 7%;
+}
+
+.resume-container{
+  max-width:900px;
+  margin:auto;
+}
+
+.resume-hero{
+  background:#fff;
+  border:1px solid #fce7f3;
+  border-radius:24px;
+  padding:35px;
+  box-shadow:0 14px 40px rgba(0,0,0,.07);
+  margin-bottom:28px;
+}
+
+.resume-hero h1{
+  font-size:38px;
+  color:#db2777;
+  margin-bottom:18px;
+}
+
+.resume-hero p{
+  color:#374151;
+  line-height:1.7;
+  font-size:16px;
+}
+
+.resume-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+  margin-bottom:24px;
+}
+
+.resume-card{
+  background:#fff;
+  border:1px solid #fce7f3;
+  border-radius:22px;
+  padding:26px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+  margin-bottom:24px;
+}
+
+.resume-card h3{
+  color:#111827;
+  font-size:22px;
+  margin-bottom:14px;
+}
+
+.resume-card p{
+  color:#374151;
+  line-height:1.7;
+  white-space:pre-line;
+}
+
+.skill-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.skill-tags span{
+  background:#fce7f3;
+  color:#be185d;
+  padding:9px 13px;
+  border-radius:30px;
+  font-weight:700;
+  font-size:14px;
+}
+
+.resume-download-btn{
+  display:inline-block;
+  background:#db2777;
+  color:white;
+  padding:13px 22px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:800;
+  margin-bottom:20px;
+}
+
+.resume-frame{
+  width:100%;
+  height:520px;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+}
+
+@media(max-width:800px){
+  .resume-grid{
+    grid-template-columns:1fr;
+  }
+
+  .resume-hero h1{
+    font-size:30px;
+  }
+
+  .resume-frame{
+    height:420px;
+  }
+}
+</style>
+
 </head>
 
 <script src="js/visitor.js"></script>
@@ -51,47 +159,49 @@
   </div>
 </nav>
 
-<section class="section">
-  <h2>Professional Resume</h2>
+<section class="resume-page">
+  <div class="resume-container">
 
-  <div class="resume-box">
-    <h3>Neeraj Swami</h3>
-
-    <p><strong>Current Role:</strong> IT Support Assistant</p>
-
-    <p>
-      <strong>Professional Experience:</strong>
-      4+ years of experience in e-Mitra services, government documentation management,
-      citizen support services, and digital operations.
-    </p>
-
-    <p>
-      <strong>Technical Skills:</strong>
-      Python, SQL, HTML, CSS, JavaScript, Node.js, FastAPI, Flask, MySQL, SQLite,
-      GitHub, Linux, MS Office, Database Management.
-    </p>
-
-    <p><strong>Languages:</strong> Hindi, English, Punjabi</p>
-
-    <p><strong>Education:</strong></p>
-
-    <ul style="padding-left:25px; margin-top:10px; margin-bottom:20px;">
-      <li>Bachelor of Arts (BA)</li>
-      <li>PGDCA (Post Graduate Diploma in Computer Applications)</li>
-      <li>RBSE Senior Secondary</li>
-    </ul>
-
-    <p>
-      <strong>Career Objective:</strong>
-      To build a successful career in Information Technology by combining technical skills,
-      practical experience, and continuous learning.
-    </p>
-
-    <br>
-
-    <div id="resumeBox">
-      <p>Loading resume...</p>
+    <div class="resume-hero">
+      <h1 id="resumeName">Neeraj Swami</h1>
+      <p id="resumeExperience">
+        I have 4+ years of experience in e-Mitra services, government documentation,
+        online applications and citizen support.
+      </p>
     </div>
+
+    <div class="resume-grid">
+      <div class="resume-card">
+        <h3>Currently Working</h3>
+        <p id="resumeRole">IT Support Assistant at NHAI</p>
+      </div>
+
+      <div class="resume-card">
+        <h3>Language Knowledge</h3>
+        <p id="resumeLanguages">Hindi, English, Punjabi</p>
+      </div>
+    </div>
+
+    <div class="resume-card full">
+      <h3>My Skills</h3>
+      <div id="resumeSkills" class="skill-tags"></div>
+    </div>
+
+    <div class="resume-card full">
+      <h3>My Education</h3>
+      <p id="resumeEducation"></p>
+    </div>
+
+    <div class="resume-card full">
+      <h3>Career Objective</h3>
+      <p id="resumeObjective"></p>
+    </div>
+
+    <div class="resume-card full" id="resumePdfBox">
+      <h3>Resume PDF</h3>
+      <div id="resumeBox">Loading resume...</div>
+    </div>
+
   </div>
 </section>
 
