@@ -1,47 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta name="description" content="Neeraj Swami - Full Stack Engineer, IT Support Assistant and e-Mitra Service Expert with experience in web development and government documentation services.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="keywords" content="Neeraj Swami, Full Stack Engineer, IT Support Assistant, e-Mitra, Web Developer, Portfolio, Hanumangarh, Rajasthan">
+<title>About Neeraj Swami | Full Stack Developer & IT Support Assistant</title>
 
+<meta name="description" content="Learn about Neeraj Swami, e-Mitra service expert, IT Support Assistant and aspiring Full Stack Developer.">
+<meta name="keywords" content="Neeraj Swami, Full Stack Developer, IT Support Assistant, e-Mitra Expert, NHAI, Python, Rajasthan">
 <meta name="author" content="Neeraj Swami">
 
-<meta property="og:title" content="Neeraj Swami | Full Stack Engineer">
-<meta property="og:description" content="Portfolio website of Neeraj Swami - Full Stack Engineer, IT Support Assistant and e-Mitra Service Expert.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://neeraj-fullstack-website.onrender.com">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
 
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-T8Z2PD4T1F"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<style>
+.about-page{
+  padding:60px 7%;
+  background:#fff7fb;
+}
 
-  gtag('config', 'G-T8Z2PD4T1F');
-</script>
+.about-hero{
+  background:#fff;
+  border:1px solid #fce7f3;
+  border-radius:24px;
+  padding:35px;
+  box-shadow:0 14px 40px rgba(0,0,0,.07);
+}
 
-  <title>About Neeraj Swami | Full Stack Developer & IT Support Assistant</title>
+.about-hero h1{
+  font-size:38px;
+  color:#db2777;
+  margin-bottom:12px;
+}
 
-  <meta name="description"
-    content="Learn about Neeraj Swami, an e-Mitra service expert, IT Support Assistant at NHAI, and aspiring Full Stack Developer skilled in Python, HTML, CSS, JavaScript, and Node.js.">
+.about-hero p{
+  color:#374151;
+  font-size:17px;
+  line-height:1.7;
+}
 
-  <meta name="keywords"
-    content="Neeraj Swami, Full Stack Developer, IT Support Assistant, e-Mitra Expert, NHAI, Python, Node.js, Rajasthan">
+.about-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+  margin-top:28px;
+}
 
-  <meta name="author" content="Neeraj Swami">
+.about-info-card{
+  background:#fff;
+  border:1px solid #fce7f3;
+  border-radius:22px;
+  padding:26px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
 
-  <link rel="stylesheet" href="css/style.css">
+.about-info-card.full{
+  grid-column:1 / -1;
+}
+
+.about-info-card h3{
+  color:#111827;
+  font-size:22px;
+  margin-bottom:12px;
+}
+
+.about-info-card p{
+  color:#374151;
+  line-height:1.7;
+  white-space:pre-line;
+}
+
+.skill-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.skill-tags span{
+  background:#fce7f3;
+  color:#be185d;
+  padding:9px 13px;
+  border-radius:30px;
+  font-weight:700;
+  font-size:14px;
+}
+
+.connect-box{
+  margin-top:28px;
+  background:#111827;
+  color:white;
+  border-radius:24px;
+  padding:32px;
+  text-align:center;
+}
+
+.connect-box h3{
+  font-size:26px;
+  margin-bottom:12px;
+}
+
+.connect-box p{
+  color:#e5e7eb;
+  line-height:1.7;
+}
+
+@media(max-width:800px){
+  .about-grid{
+    grid-template-columns:1fr;
+  }
+
+  .about-hero h1{
+    font-size:30px;
+  }
+}
+</style>
 </head>
 
-<script src="js/visitor.js"></script>
 <body>
 
-  <nav class="navbar">
+<nav class="navbar">
   <div class="logo">
     <img id="siteLogoImage" src="" alt="Logo">
     <span id="siteLogoText">Neeraj.dev</span>
@@ -59,26 +135,100 @@
   </div>
 </nav>
 
-  <section class="section">
-    <h2>About Me</h2>
+<section class="about-page">
+  <div class="about-hero">
+    <h1 id="aboutName">Loading...</h1>
+    <p id="aboutExperience"></p>
+  </div>
 
-    <div class="card">
-  <div id="aboutContentText"> Neeraj Swami | Full Stack Developer & IT Support Assistant</div>
-</div>
-  </section>
+  <div class="about-grid">
+    <div class="about-info-card">
+      <h3>Currently Working</h3>
+      <p id="aboutCurrentWork"></p>
+    </div>
 
-  <div id="socialLinks" class="social-links"></div>
+    <div class="about-info-card">
+      <h3>Language Knowledge</h3>
+      <p id="aboutLanguages"></p>
+    </div>
 
-  <footer class="footer" id="footerTextDisplay">
-  Loading...
-</footer>
+    <div class="about-info-card full">
+      <h3>My Skills</h3>
+      <div id="aboutSkills" class="skill-tags"></div>
+    </div>
 
-  <script src="js/app.js"></script>
+    <div class="about-info-card full">
+      <h3>My Education</h3>
+      <p id="aboutEducation"></p>
+    </div>
+  </div>
 
-  <a id="whatsappFloat" class="whatsapp-float" href="#" target="_blank">
+  <div class="connect-box">
+    <h3>Let's Connect and Grow Together</h3>
+    <p id="aboutConnect"></p>
+  </div>
+</section>
+
+<div id="socialLinks" class="social-links"></div>
+
+<footer class="footer" id="footerTextDisplay">Loading...</footer>
+
+<a id="whatsappFloat" class="whatsapp-float" href="#" target="_blank">
   WhatsApp
 </a>
 
-</body>
+<script src="js/visitor.js"></script>
+<script src="js/app.js"></script>
 
+<script>
+async function loadAboutPage(){
+  try{
+    const res = await fetch("/api/about");
+    const data = await res.json();
+
+    document.getElementById("aboutName").innerText =
+      data.name || "Neeraj Swami";
+
+    document.getElementById("aboutExperience").innerText =
+      data.experience || "I have 4+ years of experience in e-Mitra services, government documentation, online applications and citizen support.";
+
+    document.getElementById("aboutCurrentWork").innerText =
+      data.currentWork || "IT Support Assistant at NHAI";
+
+    document.getElementById("aboutLanguages").innerText =
+      data.languages || "Hindi, English, Punjabi";
+
+    document.getElementById("aboutEducation").innerText =
+      data.education || "RBSE Senior Secondary, Bachelor of Arts from MGSU Bikaner, PGDCA from JRRSU Jaipur";
+
+    document.getElementById("aboutConnect").innerText =
+      data.connect || "Let's connect and grow together with technology, digital services and professional support.";
+
+    const skills = String(data.skills || "Python, SQL, HTML, CSS, JavaScript, Node.js, FastAPI, Flask, MySQL, SQLite, MS Office")
+      .split(",")
+      .map(skill => skill.trim())
+      .filter(Boolean);
+
+    document.getElementById("aboutSkills").innerHTML = skills
+      .map(skill => `<span>${escapeHTML(skill)}</span>`)
+      .join("");
+
+  }catch(error){
+    console.error("About page loading error:", error);
+  }
+}
+
+function escapeHTML(value){
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+loadAboutPage();
+</script>
+
+</body>
 </html>
