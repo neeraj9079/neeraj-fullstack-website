@@ -1,22 +1,17 @@
 async function getMe() {
   try {
-    const res = await fetch('/api/me');
+    const res = await fetch("/api/me");
     const data = await res.json();
-
-    const userStatus = document.getElementById('userStatus');
+    const userStatus = document.getElementById("userStatus");
 
     if (userStatus) {
-      if (data.user) {
-        userStatus.innerHTML = `
-          <p><strong>Logged in as:</strong> ${data.user.name} (${data.user.role})</p>
-          <button class="btn" onclick="logout()">Logout</button>
-        `;
-      } else {
-        userStatus.innerHTML = `<p>You are not logged in.</p>`;
-      }
+      userStatus.innerHTML = data.user
+        ? `<p><strong>Logged in as:</strong> ${data.user.name} (${data.user.role})</p>
+           <button class="btn" onclick="logout()">Logout</button>`
+        : `<p>You are not logged in.</p>`;
     }
   } catch (error) {
-    console.error('Get user error:', error);
+    console.error("Get user error:", error);
   }
 }
 
@@ -25,24 +20,20 @@ async function handleRegister(event) {
 
   const form = event.target;
 
-  const body = {
-    name: form.name.value,
-    email: form.email.value,
-    password: form.password.value
-  };
-
-  const res = await fetch('/api/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+  const res = await fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: form.name.value,
+      email: form.email.value,
+      password: form.password.value
+    })
   });
 
   const data = await res.json();
   alert(data.message);
 
-  if (res.ok) {
-    window.location.href = 'login.html';
-  }
+  if (res.ok) window.location.href = "login.html";
 }
 
 async function handleLogin(event) {
@@ -50,76 +41,74 @@ async function handleLogin(event) {
 
   const form = event.target;
 
-  const body = {
-    email: form.email.value,
-    password: form.password.value
-  };
-
-  const res = await fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: form.email.value,
+      password: form.password.value
+    })
   });
 
   const data = await res.json();
   alert(data.message);
 
   if (res.ok) {
-    if (data.role === 'admin') {
-      window.location.href = '/admin-neeraj-9079';
-    } else {
-      window.location.href = '/dashboard';
-    }
+    window.location.href = data.role === "admin" ? "/admin-neeraj-9079" : "/dashboard";
   }
 }
 
 async function logout() {
-  await fetch('/api/logout', { method: 'POST' });
-  window.location.href = 'login.html';
+  await fetch("/api/logout", { method: "POST" });
+  window.location.href = "login.html";
 }
 
 async function loadDashboardStats() {
   try {
-    const usersRes = await fetch('/api/admin/users');
-    const projectsRes = await fetch('/api/projects');
-    const galleryRes = await fetch('/api/gallery');
-    const messagesRes = await fetch('/api/admin/messages');
+    const usersRes = await fetch("/api/admin/users");
+    const projectsRes = await fetch("/api/projects");
+    const galleryRes = await fetch("/api/gallery");
+    const messagesRes = await fetch("/api/admin/messages");
 
     const users = usersRes.ok ? await usersRes.json() : [];
     const projects = projectsRes.ok ? await projectsRes.json() : [];
     const gallery = galleryRes.ok ? await galleryRes.json() : [];
     const messages = messagesRes.ok ? await messagesRes.json() : [];
 
-    const totalUsers = document.getElementById('totalUsers');
-    const adminUsers = document.getElementById('adminUsers');
-    const totalProjects = document.getElementById('totalProjects');
-    const galleryImages = document.getElementById('galleryImages');
-    const contactMessages = document.getElementById('contactMessages');
+    if (document.getElementById("totalUsers")) {
+      document.getElementById("totalUsers").textContent = users.length;
+    }
 
-    if (totalUsers) totalUsers.textContent = users.length;
-    if (adminUsers) adminUsers.textContent = users.filter(user => user.role === 'admin').length;
-    if (totalProjects) totalProjects.textContent = projects.length;
-    if (galleryImages) galleryImages.textContent = gallery.length;
-    if (contactMessages) contactMessages.textContent = messages.length;
+    if (document.getElementById("adminUsers")) {
+      document.getElementById("adminUsers").textContent =
+        users.filter(user => user.role === "admin").length;
+    }
+
+    if (document.getElementById("totalProjects")) {
+      document.getElementById("totalProjects").textContent = projects.length;
+    }
+
+    if (document.getElementById("galleryImages")) {
+      document.getElementById("galleryImages").textContent = gallery.length;
+    }
+
+    if (document.getElementById("contactMessages")) {
+      document.getElementById("contactMessages").textContent = messages.length;
+    }
   } catch (error) {
-    console.error('Dashboard stats error:', error);
+    console.error("Dashboard stats error:", error);
   }
 }
 
 async function loadAdminUsers() {
-  const usersBody = document.getElementById('usersBody');
-
+  const usersBody = document.getElementById("usersBody");
   if (!usersBody) return;
 
   try {
-    const res = await fetch('/api/admin/users');
+    const res = await fetch("/api/admin/users");
 
     if (!res.ok) {
-      usersBody.innerHTML = `
-        <tr>
-          <td colspan="5">Access denied. Admin login required.</td>
-        </tr>
-      `;
+      usersBody.innerHTML = `<tr><td colspan="5">Access denied. Admin login required.</td></tr>`;
       return;
     }
 
@@ -132,15 +121,12 @@ async function loadAdminUsers() {
         <td>${user.email}</td>
         <td>${user.role}</td>
         <td>
-          <button class="delete-btn" onclick="deleteUser(${user.id})">
-            Delete
-          </button>
+          <button class="delete-btn" onclick="deleteUser(${user.id})">Delete</button>
         </td>
       </tr>
-    `).join('');
-
+    `).join("");
   } catch (error) {
-    console.error('Admin users error:', error);
+    console.error("Admin users error:", error);
   }
 }
 
@@ -234,14 +220,32 @@ if (projectsContainer) {
         return;
       }
 
-      projectsContainer.innerHTML = projects.map(project => `
-        <div class="project">
-          <h3>${project.title}</h3>
-          <p>${project.description}</p>
-          ${project.github ? `<a class="btn" href="${project.github}" target="_blank">GitHub</a>` : ""}
-          ${project.demo ? `<a class="btn secondary" href="${project.demo}" target="_blank">Live Demo</a>` : ""}
-        </div>
-      `).join("");
+      projectsContainer.innerHTML = projects.map(project => {
+        const title = String(project.title || "");
+        const isEmitraProject = title.toLowerCase().includes("e-mitra");
+
+        const projectLink = isEmitraProject
+          ? "emitra.html"
+          : project.demo || "#";
+
+        return `
+          <a href="${projectLink}" class="project-click-card">
+            <div class="project">
+              <h3>${project.title}</h3>
+              <p>${project.description}</p>
+
+              ${project.github ? `<span class="btn">GitHub</span>` : ""}
+              <span class="btn secondary">
+                ${isEmitraProject ? "Open e-Mitra Portal" : "Open Project"}
+              </span>
+            </div>
+          </a>
+        `;
+      }).join("");
+    })
+    .catch(error => {
+      console.error("Projects load error:", error);
+      projectsContainer.innerHTML = "<p>Projects load failed.</p>";
     });
 }
 
@@ -466,7 +470,6 @@ if (contactForm) {
       } else {
         alert(data.message || "Message failed. Please try again.");
       }
-
     } catch (error) {
       console.error("Contact error:", error);
       alert("Network error. Please try again.");
@@ -540,7 +543,6 @@ if (settingsForm) {
     });
 
     const data = await res.json();
-
     alert(data.message);
   });
 }
@@ -627,7 +629,6 @@ if (resumeDownloadBtn) {
 /* DELETE USER */
 async function deleteUser(id) {
   const confirmDelete = confirm("Are you sure you want to delete this user?");
-
   if (!confirmDelete) return;
 
   try {
@@ -641,7 +642,6 @@ async function deleteUser(id) {
 
     loadAdminUsers();
     loadDashboardStats();
-
   } catch (err) {
     console.error(err);
     alert("Delete failed");
@@ -650,7 +650,6 @@ async function deleteUser(id) {
 
 async function deleteMessage(id) {
   const confirmDelete = confirm("Are you sure you want to delete this message?");
-
   if (!confirmDelete) return;
 
   try {
@@ -661,9 +660,7 @@ async function deleteMessage(id) {
     const data = await res.json();
 
     alert(data.message || "Message deleted successfully");
-
     location.reload();
-
   } catch (err) {
     console.error(err);
     alert("Delete failed");
