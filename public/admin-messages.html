@@ -5,9 +5,189 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Messages Admin | Neeraj.dev</title>
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+.messages-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:22px;
+}
+
+.messages-title h2{
+  font-size:28px;
+  color:#111827;
+  margin-bottom:6px;
+}
+
+.messages-title p{
+  color:#6b7280;
+}
+
+.message-count-card{
+  background:#db2777;
+  color:#fff;
+  padding:18px 24px;
+  border-radius:16px;
+  min-width:180px;
+  box-shadow:0 10px 25px rgba(219,39,119,.25);
+}
+
+.message-count-card h3{
+  font-size:14px;
+  opacity:.9;
+}
+
+.message-count-card strong{
+  display:block;
+  font-size:34px;
+  margin-top:5px;
+}
+
+.messages-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.messages-search{
+  width:100%;
+  max-width:420px;
+  padding:14px 16px;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  outline:none;
+  font-size:15px;
+}
+
+.messages-search:focus{
+  border-color:#db2777;
+  box-shadow:0 0 0 3px rgba(219,39,119,.12);
+}
+
+.refresh-messages-btn{
+  border:none;
+  background:#111827;
+  color:white;
+  padding:13px 20px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.messages-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;
+}
+
+.message-card{
+  background:#fff;
+  border:1px solid #fce7f3;
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 12px 30px rgba(0,0,0,.06);
+  transition:.25s ease;
+}
+
+.message-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 40px rgba(219,39,119,.13);
+}
+
+.message-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+  margin-bottom:14px;
+}
+
+.message-name{
+  color:#db2777;
+  font-size:20px;
+  font-weight:800;
+}
+
+.message-date{
+  background:#fce7f3;
+  color:#be185d;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.message-info p{
+  color:#374151;
+  margin-bottom:9px;
+  line-height:1.5;
+  word-break:break-word;
+}
+
+.message-info strong{
+  color:#111827;
+}
+
+.message-text{
+  background:#fff7fb;
+  border:1px solid #fce7f3;
+  padding:14px;
+  border-radius:14px;
+  margin-top:12px;
+}
+
+.delete-message-btn{
+  margin-top:16px;
+  border:none;
+  background:#ef4444;
+  color:#fff;
+  padding:11px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.empty-message{
+  background:#fff;
+  border:1px solid #fce7f3;
+  border-radius:18px;
+  padding:35px;
+  text-align:center;
+  color:#6b7280;
+}
+
+.sidebar-badge{
+  background:#db2777;
+  color:#fff;
+  padding:3px 8px;
+  border-radius:20px;
+  font-size:12px;
+  margin-left:6px;
+}
+
+@media(max-width:900px){
+  .messages-header,
+  .messages-toolbar{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .messages-grid{
+    grid-template-columns:1fr;
+  }
+
+  .message-count-card{
+    width:100%;
+  }
+}
+</style>
 </head>
 
-<script src="js/visitor.js"></script>
 <body class="admin-body">
 
 <nav class="admin-topbar">
@@ -22,16 +202,144 @@
   <aside class="admin-sidebar">
     <h3>Messages Admin</h3>
     <a href="admin.html">Dashboard</a>
+    <a href="admin-messages.html">
+      Contact Messages <span id="sidebarMessageBadge" class="sidebar-badge">0</span>
+    </a>
   </aside>
 
   <main class="admin-main">
     <section class="admin-section">
-      <h2>Contact Messages</h2>
-      <div id="adminMessagesList" class="admin-list"></div>
+
+      <div class="messages-header">
+        <div class="messages-title">
+          <h2>Contact Messages</h2>
+          <p>Manage and review messages received from your website contact form.</p>
+        </div>
+
+        <div class="message-count-card">
+          <h3>Total Messages</h3>
+          <strong id="totalMessages">0</strong>
+        </div>
+      </div>
+
+      <div class="messages-toolbar">
+        <input
+          type="text"
+          id="messageSearch"
+          class="messages-search"
+          placeholder="Search by name, email, subject or message..."
+        >
+
+        <button class="refresh-messages-btn" onclick="loadMessages()">↻ Refresh</button>
+      </div>
+
+      <div id="adminMessagesList" class="messages-grid"></div>
+
     </section>
   </main>
 </div>
 
 <script src="js/app.js"></script>
+
+<script>
+const adminMessagesList = document.getElementById("adminMessagesList");
+const totalMessages = document.getElementById("totalMessages");
+const sidebarMessageBadge = document.getElementById("sidebarMessageBadge");
+const messageSearch = document.getElementById("messageSearch");
+
+let allMessages = [];
+
+async function loadMessages(){
+  try{
+    const res = await fetch("/api/admin/messages");
+    allMessages = await res.json();
+
+    totalMessages.innerText = allMessages.length;
+    sidebarMessageBadge.innerText = allMessages.length;
+
+    renderMessages();
+  }catch(error){
+    console.error(error);
+    adminMessagesList.innerHTML = `
+      <div class="empty-message">
+        Unable to load messages. Please login as admin.
+      </div>
+    `;
+  }
+}
+
+function renderMessages(){
+  const keyword = messageSearch.value.toLowerCase().trim();
+
+  const filtered = allMessages.filter(msg =>
+    String(msg.name || "").toLowerCase().includes(keyword) ||
+    String(msg.email || "").toLowerCase().includes(keyword) ||
+    String(msg.mobile || "").toLowerCase().includes(keyword) ||
+    String(msg.subject || "").toLowerCase().includes(keyword) ||
+    String(msg.message || "").toLowerCase().includes(keyword)
+  );
+
+  if(!filtered.length){
+    adminMessagesList.innerHTML = `
+      <div class="empty-message">
+        No messages found.
+      </div>
+    `;
+    return;
+  }
+
+  adminMessagesList.innerHTML = filtered.map(msg => `
+    <div class="message-card">
+      <div class="message-top">
+        <div class="message-name">${escapeHTML(msg.name || "Unknown User")}</div>
+        <div class="message-date">${escapeHTML(msg.date || "No Date")}</div>
+      </div>
+
+      <div class="message-info">
+        <p><strong>Email:</strong> ${escapeHTML(msg.email || "N/A")}</p>
+        <p><strong>Mobile:</strong> ${escapeHTML(msg.mobile || "N/A")}</p>
+        <p><strong>Subject:</strong> ${escapeHTML(msg.subject || "No Subject")}</p>
+
+        <div class="message-text">
+          <strong>Message:</strong><br>
+          ${escapeHTML(msg.message || "No Message")}
+        </div>
+      </div>
+
+      <button class="delete-message-btn" onclick="deleteMessage('${msg.id}')">
+        Delete Message
+      </button>
+    </div>
+  `).join("");
+}
+
+async function deleteMessage(id){
+  const ok = confirm("Delete this message?");
+  if(!ok) return;
+
+  const res = await fetch(`/api/admin/messages/${id}`, {
+    method: "DELETE"
+  });
+
+  const data = await res.json();
+  alert(data.message || "Message deleted");
+
+  loadMessages();
+}
+
+function escapeHTML(value){
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+messageSearch.addEventListener("input", renderMessages);
+
+loadMessages();
+</script>
+
 </body>
 </html>
