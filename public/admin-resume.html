@@ -5,9 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Resume Admin | Neeraj.dev</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+.resume-card{background:#fff;border-radius:22px;padding:26px;box-shadow:0 14px 40px rgba(0,0,0,.07)}
+.resume-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.resume-grid .full{grid-column:1/-1}
+.resume-grid input,.resume-grid textarea{width:100%;padding:15px;border:1px solid #e5e7eb;border-radius:14px;font-size:15px}
+.resume-grid textarea{min-height:115px;resize:vertical}
+.resume-grid input:focus,.resume-grid textarea:focus{outline:none;border-color:#db2777;box-shadow:0 0 0 3px rgba(219,39,119,.12)}
+.resume-grid label{font-weight:800;color:#111827;margin-bottom:7px;display:block}
+.save-btn{background:#db2777;color:#fff;border:0;padding:14px 24px;border-radius:14px;font-weight:800;cursor:pointer}
+@media(max-width:900px){.resume-grid{grid-template-columns:1fr}}
+</style>
 </head>
 
-<script src="js/visitor.js"></script>
 <body class="admin-body">
 
 <nav class="admin-topbar">
@@ -28,16 +38,110 @@
     <section class="admin-section">
       <h2>Resume Manager</h2>
 
-      <form id="resumeForm" class="admin-form" enctype="multipart/form-data">
-        <input type="file" id="resumeFile" name="resume" accept="application/pdf" required>
-        <button type="submit">Upload Resume PDF</button>
-      </form>
+      <div class="resume-card">
+        <form id="resumeForm" enctype="multipart/form-data">
+          <div class="resume-grid">
 
-      <div id="adminResumeStatus" class="admin-status"></div>
+            <div>
+              <label>Enter Name</label>
+              <input type="text" id="resumeName" name="name">
+            </div>
+
+            <div>
+              <label>Current Role</label>
+              <input type="text" id="resumeRole" name="role">
+            </div>
+
+            <div class="full">
+              <label>Professional Experience</label>
+              <textarea id="resumeExperience" name="experience"></textarea>
+            </div>
+
+            <div class="full">
+              <label>Technical Skills</label>
+              <textarea id="resumeSkills" name="skills"></textarea>
+            </div>
+
+            <div>
+              <label>Languages</label>
+              <textarea id="resumeLanguages" name="languages"></textarea>
+            </div>
+
+            <div>
+              <label>Education</label>
+              <textarea id="resumeEducation" name="education"></textarea>
+            </div>
+
+            <div class="full">
+              <label>Career Objective</label>
+              <textarea id="resumeObjective" name="objective"></textarea>
+            </div>
+
+            <div class="full">
+              <label>Resume PDF Upload</label>
+              <input type="file" id="resumeFile" name="resume" accept="application/pdf">
+            </div>
+
+            <div class="full">
+              <button type="submit" class="save-btn">Save Resume</button>
+            </div>
+
+          </div>
+        </form>
+
+        <div id="adminResumeStatus" class="admin-status"></div>
+      </div>
     </section>
   </main>
 </div>
 
-<script src="js/app.js"></script>
+<script>
+async function logout(){
+  await fetch("/api/logout",{method:"POST"});
+  location.href="login.html";
+}
+
+async function loadResume(){
+  const res = await fetch("/api/resume");
+  const data = await res.json();
+
+  resumeName.value = data.name || "Neeraj Swami";
+  resumeRole.value = data.role || "IT Support Assistant";
+  resumeExperience.value = data.experience || "";
+  resumeSkills.value = data.skills || "";
+  resumeLanguages.value = data.languages || "";
+  resumeEducation.value = data.education || "";
+  resumeObjective.value = data.objective || "";
+}
+
+resumeForm.addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append("name", resumeName.value);
+  formData.append("role", resumeRole.value);
+  formData.append("experience", resumeExperience.value);
+  formData.append("skills", resumeSkills.value);
+  formData.append("languages", resumeLanguages.value);
+  formData.append("education", resumeEducation.value);
+  formData.append("objective", resumeObjective.value);
+
+  if(resumeFile.files[0]){
+    formData.append("resume", resumeFile.files[0]);
+  }
+
+  const res = await fetch("/api/admin/resume", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+  adminResumeStatus.innerText = data.message || "Resume updated successfully";
+  alert(data.message || "Resume updated successfully");
+});
+
+loadResume();
+</script>
+
 </body>
 </html>

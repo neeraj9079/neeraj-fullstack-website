@@ -837,3 +837,35 @@ select:focus {
   box-shadow:0 0 0 3px rgba(219,39,119,.12);
   outline:none;
 }
+
+.resume-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.resume-grid textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+.resume-grid textarea,
+.resume-grid input{
+  width:100%;
+  padding:15px;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+}
+
+.resume-grid textarea:focus,
+.resume-grid input:focus{
+  outline:none;
+  border-color:#db2777;
+  box-shadow:0 0 0 3px rgba(219,39,119,.12);
+}
+
+@media(max-width:900px){
+  .resume-grid{
+    grid-template-columns:1fr;
+  }
+}

@@ -103,6 +103,46 @@
 
 <script src="js/app.js"></script>
 
+<script>
+async function loadResumePage(){
+  const res = await fetch("/api/resume");
+  const data = await res.json();
+
+  document.querySelector(".resume-box h3").innerText = data.name || "Neeraj Swami";
+
+  document.querySelector(".resume-box").innerHTML = `
+    <h3>${data.name || "Neeraj Swami"}</h3>
+
+    <p><strong>Current Role:</strong> ${data.role || "IT Support Assistant"}</p>
+
+    <p><strong>Professional Experience:</strong> ${data.experience || ""}</p>
+
+    <p><strong>Technical Skills:</strong> ${data.skills || ""}</p>
+
+    <p><strong>Languages:</strong> ${data.languages || ""}</p>
+
+    <p><strong>Education:</strong></p>
+    <ul style="padding-left:25px; margin-top:10px; margin-bottom:20px;">
+      ${String(data.education || "").split("\\n").map(item => `<li>${item}</li>`).join("")}
+    </ul>
+
+    <p><strong>Career Objective:</strong> ${data.objective || ""}</p>
+
+    <br>
+
+    ${
+      data.resume
+        ? `<a class="btn" href="${data.resume}" target="_blank" download>Download Resume</a>
+           <br><br>
+           <iframe src="${data.resume}" width="100%" height="500px"></iframe>`
+        : `<p>No resume PDF uploaded.</p>`
+    }
+  `;
+}
+
+loadResumePage();
+</script>
+
 <a id="whatsappFloat" class="whatsapp-float" href="#" target="_blank">
   WhatsApp
 </a>

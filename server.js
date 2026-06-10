@@ -293,15 +293,34 @@ app.delete("/api/admin/gallery/:id", requireAdmin, async (req, res) => {
 
 /* RESUME */
 app.get("/api/resume", (req, res) => {
-  res.json(readJson(path.join(__dirname, "data", "resume.json"), { resume: "" }));
+  res.json(readJson(path.join(__dirname, "data", "resume.json"), {
+    name: "Neeraj Swami",
+    role: "IT Support Assistant",
+    experience: "4+ years of experience in e-Mitra services, government documentation management, citizen support services, and digital operations.",
+    skills: "Python, SQL, HTML, CSS, JavaScript, Node.js, FastAPI, Flask, MySQL, SQLite, GitHub, Linux, MS Office, Database Management",
+    languages: "Hindi, English, Punjabi",
+    education: "Bachelor of Arts (BA)\nPGDCA (Post Graduate Diploma in Computer Applications)\nRBSE Senior Secondary",
+    objective: "To build a successful career in Information Technology by combining technical skills, practical experience, and continuous learning.",
+    resume: ""
+  }));
 });
 
 app.post("/api/admin/resume", requireAdmin, upload.single("resume"), (req, res) => {
-  writeJson(path.join(__dirname, "data", "resume.json"), {
-    resume: req.file ? `/uploads/${req.file.filename}` : ""
+  const file = path.join(__dirname, "data", "resume.json");
+  const oldData = readJson(file, {});
+
+  writeJson(file, {
+    name: req.body.name || "",
+    role: req.body.role || "",
+    experience: req.body.experience || "",
+    skills: req.body.skills || "",
+    languages: req.body.languages || "",
+    education: req.body.education || "",
+    objective: req.body.objective || "",
+    resume: req.file ? `/uploads/${req.file.filename}` : oldData.resume || ""
   });
 
-  res.json({ message: "Resume uploaded successfully" });
+  res.json({ message: "Resume updated successfully" });
 });
 
 /* CONTACT EMAIL */
