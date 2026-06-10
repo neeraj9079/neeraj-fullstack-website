@@ -384,42 +384,130 @@ async function deleteGalleryItem(id) {
   location.reload();
 }
 
-/* RESUME DISPLAY */
+/* MODERN RESUME DISPLAY */
 const resumeBox = document.getElementById("resumeBox");
 
 if (resumeBox) {
   fetch("/api/resume")
     .then(res => res.json())
     .then(data => {
-      if (!data.resume) {
-        resumeBox.innerHTML = "<p>No resume uploaded yet.</p>";
-        return;
+
+      const resumeName = document.getElementById("resumeName");
+      const resumeRole = document.getElementById("resumeRole");
+      const resumeExperience = document.getElementById("resumeExperience");
+      const resumeLanguages = document.getElementById("resumeLanguages");
+      const resumeEducation = document.getElementById("resumeEducation");
+      const resumeObjective = document.getElementById("resumeObjective");
+      const resumeSkills = document.getElementById("resumeSkills");
+
+      if (resumeName) {
+        resumeName.textContent = data.name || "Neeraj Swami";
       }
 
-      resumeBox.innerHTML = `
-        <a class="btn" href="${data.resume}" download>Download Resume</a>
-        <br><br>
-        <iframe src="${data.resume}" width="100%" height="700" style="border-radius:15px;border:1px solid #eee;"></iframe>
-      `;
+      if (resumeRole) {
+        resumeRole.textContent = data.role || "IT Support Assistant";
+      }
+
+      if (resumeExperience) {
+        resumeExperience.textContent = data.experience || "";
+      }
+
+      if (resumeLanguages) {
+        resumeLanguages.textContent = data.languages || "";
+      }
+
+      if (resumeEducation) {
+        resumeEducation.textContent = data.education || "";
+      }
+
+      if (resumeObjective) {
+        resumeObjective.textContent = data.objective || "";
+      }
+
+      if (resumeSkills) {
+        const skills = String(data.skills || "")
+          .split(",")
+          .map(skill => skill.trim())
+          .filter(Boolean);
+
+        resumeSkills.innerHTML = skills
+          .map(skill => `<span>${skill}</span>`)
+          .join("");
+      }
+
+      if (data.resume) {
+        resumeBox.innerHTML = `
+          <a class="resume-download-btn"
+             href="${data.resume}"
+             target="_blank"
+             download>
+             Download Resume
+          </a>
+
+          <iframe
+            class="resume-frame"
+            src="${data.resume}">
+          </iframe>
+        `;
+      } else {
+        resumeBox.innerHTML =
+          "<p>No resume PDF uploaded.</p>";
+      }
+    })
+    .catch(error => {
+      console.error("Resume load error:", error);
     });
 }
 
-/* RESUME UPLOAD */
+/* MODERN RESUME ADMIN */
 const resumeForm = document.getElementById("resumeForm");
 
 if (resumeForm) {
-  resumeForm.addEventListener("submit", async function (e) {
+
+  fetch("/api/resume")
+    .then(res => res.json())
+    .then(data => {
+
+      if(document.getElementById("resumeName"))
+        document.getElementById("resumeName").value = data.name || "";
+
+      if(document.getElementById("resumeRole"))
+        document.getElementById("resumeRole").value = data.role || "";
+
+      if(document.getElementById("resumeExperience"))
+        document.getElementById("resumeExperience").value = data.experience || "";
+
+      if(document.getElementById("resumeSkills"))
+        document.getElementById("resumeSkills").value = data.skills || "";
+
+      if(document.getElementById("resumeLanguages"))
+        document.getElementById("resumeLanguages").value = data.languages || "";
+
+      if(document.getElementById("resumeEducation"))
+        document.getElementById("resumeEducation").value = data.education || "";
+
+      if(document.getElementById("resumeObjective"))
+        document.getElementById("resumeObjective").value = data.objective || "";
+    });
+
+  resumeForm.addEventListener("submit", async function(e){
     e.preventDefault();
 
-    const file = document.getElementById("resumeFile").files[0];
-
-    if (!file) {
-      alert("Please choose resume PDF");
-      return;
-    }
-
     const formData = new FormData();
-    formData.append("resume", file);
+
+    formData.append("name", resumeName.value);
+    formData.append("role", resumeRole.value);
+    formData.append("experience", resumeExperience.value);
+    formData.append("skills", resumeSkills.value);
+    formData.append("languages", resumeLanguages.value);
+    formData.append("education", resumeEducation.value);
+    formData.append("objective", resumeObjective.value);
+
+    const file = document.getElementById("resumeFile");
+
+    if(file && file.files[0]){
+      formData.append("resume", file.files[0]);
+    }
 
     const res = await fetch("/api/admin/resume", {
       method: "POST",
@@ -427,8 +515,8 @@ if (resumeForm) {
     });
 
     const data = await res.json();
-    alert(data.message || "Resume uploaded successfully");
-    location.reload();
+
+    alert(data.message || "Resume saved successfully");
   });
 }
 
