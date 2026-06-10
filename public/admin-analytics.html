@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Visitor Analytics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<h1>Visitor Analytics Dashboard</h1>
+
+<h2>Total Visits: <span id="totalVisits">0</span></h2>
+
+<table border="1" cellpadding="10" width="100%">
+  <thead>
+    <tr>
+      <th>Page</th>
+      <th>Referrer</th>
+      <th>IP</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody id="visitorTable"></tbody>
+</table>
+
+<script>
+async function loadAnalytics() {
+  const res = await fetch("/api/admin/analytics");
+  const data = await res.json();
+
+  document.getElementById("totalVisits").innerText = data.totalVisits || 0;
+
+  const table = document.getElementById("visitorTable");
+  table.innerHTML = "";
+
+  (data.recentVisits || []).forEach(v => {
+    table.innerHTML += `
+      <tr>
+        <td>${v.page}</td>
+        <td>${v.referrer}</td>
+        <td>${v.ip}</td>
+        <td>${new Date(v.date).toLocaleString()}</td>
+      </tr>
+    `;
+  });
+}
+
+loadAnalytics();
+</script>
+
+</body>
+</html>
