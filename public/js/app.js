@@ -756,5 +756,13 @@ async function deleteMessage(id) {
 }
 
 getMe();
-loadAdminUsers();
-loadDashboardStats();
+
+const isAdminPage =
+  document.body.classList.contains("admin-body") ||
+  window.location.pathname.includes("admin") ||
+  window.location.pathname.includes("dashboard");
+
+if (isAdminPage) {
+  loadAdminUsers();
+  loadDashboardStats();
+}
