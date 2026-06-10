@@ -85,9 +85,9 @@
       </div>
 
       <div class="contact-buttons">
-        <a id="contactEmailBtn" href="mailto:swamineeraj642@gmail.com" class="contact-btn">
-          Email Me
-        </a>
+        <a id="contactEmailBtn" href="#contactForm" class="contact-btn">
+  Send Message
+</a>
 
         <a id="contactWhatsappBtn" href="https://wa.me/919079209552" target="_blank" class="contact-btn whatsapp-btn">
           WhatsApp
@@ -146,10 +146,7 @@ async function loadContactInfoPage() {
     document.getElementById("contactInfoDescriptionText").innerText =
       data.description || "Feel free to contact me regarding IT Support, e-Mitra services, web development projects, technical collaboration and professional opportunities.";
 
-    const emailBtn = document.getElementById("contactEmailBtn");
-    if (emailBtn) {
-      emailBtn.href = "mailto:" + email;
-    }
+    
 
     const whatsappBtn = document.getElementById("contactWhatsappBtn");
     if (whatsappBtn) {
