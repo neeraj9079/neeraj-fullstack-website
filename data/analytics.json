@@ -606,5 +606,21 @@
     "userAgent": "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36",
     "ip": "::1",
     "date": "2026-06-10T08:45:24.117Z"
+  },
+  {
+    "id": 1781081237485,
+    "page": "/",
+    "referrer": "Direct",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:47:17.485Z"
+  },
+  {
+    "id": 1781081240516,
+    "page": "/contact.html",
+    "referrer": "http://localhost:3000/",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:47:20.516Z"
   }
 ]
