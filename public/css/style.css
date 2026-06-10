@@ -811,3 +811,29 @@ select:focus {
 .project-click-card:hover .project {
   transform: translateY(-5px);
 }
+
+.admin-form{
+  display:grid;
+  gap:18px;
+}
+
+.admin-form input,
+.admin-form textarea{
+  width:100%;
+  padding:15px;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  font-size:15px;
+}
+
+.admin-form textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus{
+  border-color:#db2777;
+  box-shadow:0 0 0 3px rgba(219,39,119,.12);
+  outline:none;
+}

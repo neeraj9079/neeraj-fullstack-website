@@ -5,16 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Home Admin | Neeraj.dev</title>
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+.home-admin-card{background:#fff;border-radius:22px;padding:26px;box-shadow:0 14px 40px rgba(0,0,0,.07)}
+.home-form{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.home-form .full{grid-column:1/-1}
+.home-form input,.home-form textarea{width:100%;padding:15px;border:1px solid #e5e7eb;border-radius:14px;font-size:15px}
+.home-form textarea{min-height:110px;resize:vertical}
+.home-form input:focus,.home-form textarea:focus{outline:none;border-color:#db2777;box-shadow:0 0 0 3px rgba(219,39,119,.12)}
+.home-form label{font-weight:800;color:#111827;margin-bottom:7px;display:block}
+.save-btn{background:#db2777;color:#fff;border:0;padding:14px 24px;border-radius:14px;font-weight:800;cursor:pointer}
+@media(max-width:900px){.home-form{grid-template-columns:1fr}}
+</style>
 </head>
 
-<script src="js/visitor.js"></script>
 <body class="admin-body">
 
 <nav class="admin-topbar">
-  <div class="admin-brand">
-    <span>Neeraj.dev</span>
-  </div>
-
+  <div class="admin-brand"><span>Neeraj.dev</span></div>
   <div class="admin-actions">
     <a href="admin.html">Main Admin</a>
     <button onclick="logout()">Logout</button>
@@ -22,44 +30,121 @@
 </nav>
 
 <div class="admin-layout">
-
   <aside class="admin-sidebar">
     <h3>Home Admin</h3>
     <a href="admin.html">Dashboard</a>
   </aside>
 
   <main class="admin-main">
-
     <section class="admin-section">
       <h2>Manage Home Page</h2>
 
-      <form id="homeForm" class="admin-form">
-        <input
-          type="text"
-          id="homeTitle"
-          placeholder="Home Title"
-          required
-        >
+      <div class="home-admin-card">
+        <form id="homeForm" class="home-form">
 
-        <input
-          type="text"
-          id="homeSubtitle"
-          placeholder="Home Subtitle"
-          required
-        >
+          <div class="full">
+            <label>Top Tagline</label>
+            <input type="text" id="homeTagline" placeholder="IT Support • e-Mitra • Web Development">
+          </div>
 
-        <button type="submit">
-          Save Home Page
-        </button>
-      </form>
+          <div>
+            <label>Enter Name in Bold Fonts</label>
+            <input type="text" id="homeTitle" placeholder="Neeraj Swami" required>
+          </div>
 
+          <div>
+            <label>Currently Working</label>
+            <input type="text" id="homeCurrentWork" placeholder="IT Support Assistant at NHAI">
+          </div>
+
+          <div class="full">
+            <label>Working Experience</label>
+            <textarea id="homeSubtitle" placeholder="Write working experience..." required></textarea>
+          </div>
+
+          <div class="full">
+            <label>My Skills</label>
+            <textarea id="homeSkills" placeholder="Python, HTML, CSS, JavaScript, Node.js, SQL..."></textarea>
+          </div>
+
+          <div class="full">
+            <label>What I Do</label>
+            <textarea id="homeWhatIDo" placeholder="Write what you do..."></textarea>
+          </div>
+
+          <div>
+            <label>View Projects Button Text</label>
+            <input type="text" id="homeProjectBtn" placeholder="View Projects">
+          </div>
+
+          <div>
+            <label>Hire Me Button Text</label>
+            <input type="text" id="homeHireBtn" placeholder="Hire Me">
+          </div>
+
+          <div class="full">
+            <label>Professional Highlights</label>
+            <textarea id="homeHighlights" placeholder="4+ Years Experience | IT Support Assistant | Full Stack Learning"></textarea>
+          </div>
+
+          <div class="full">
+            <button type="submit" class="save-btn">Save Home Page</button>
+          </div>
+
+        </form>
+      </div>
     </section>
-
   </main>
-
 </div>
 
-<script src="js/app.js"></script>
+<script>
+async function logout(){
+  await fetch("/api/logout",{method:"POST"});
+  location.href="login.html";
+}
+
+async function loadHome(){
+  const res = await fetch("/api/home");
+  const data = await res.json();
+
+  homeTagline.value = data.tagline || "IT Support • e-Mitra • Web Development";
+  homeTitle.value = data.title || "Neeraj Swami";
+  homeSubtitle.value = data.subtitle || "I help people and organizations with digital services, government documentation, IT support, and modern web solutions.";
+  homeCurrentWork.value = data.currentWork || "IT Support Assistant at NHAI";
+  homeSkills.value = data.skills || "Python, HTML, CSS, JavaScript, Node.js, SQL, FastAPI, Flask, MySQL";
+  homeWhatIDo.value = data.whatIDo || "I provide practical solutions in IT support, e-Mitra services, government documentation, frontend development, backend development, database handling, and admin panel development.";
+  homeProjectBtn.value = data.projectBtn || "View Projects";
+  homeHireBtn.value = data.hireBtn || "Hire Me";
+  homeHighlights.value = data.highlights || "4+ Years Experience|Practical experience in e-Mitra services, online applications and documentation support.\nIT Support Assistant|Working with IT support tasks, troubleshooting, computer operations and technical assistance.\nFull Stack Learning|Building skills in Python, JavaScript, Node.js, SQL, HTML, CSS, Flask, FastAPI and databases.";
+}
+
+homeForm.addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const payload = {
+    tagline: homeTagline.value,
+    title: homeTitle.value,
+    subtitle: homeSubtitle.value,
+    currentWork: homeCurrentWork.value,
+    skills: homeSkills.value,
+    whatIDo: homeWhatIDo.value,
+    projectBtn: homeProjectBtn.value,
+    hireBtn: homeHireBtn.value,
+    highlights: homeHighlights.value
+  };
+
+  const res = await fetch("/api/admin/home",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  alert(data.message || "Home page updated successfully");
+});
+
+loadHome();
+</script>
 
 </body>
 </html>

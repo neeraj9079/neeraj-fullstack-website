@@ -32,6 +32,49 @@
 </head>
 
 <script src="js/visitor.js"></script>
+<script>
+async function loadModernHome(){
+  const res = await fetch("/api/home");
+  const data = await res.json();
+
+  document.querySelector(".badge").innerText = data.tagline || "IT Support • e-Mitra • Web Development";
+  document.getElementById("homeTitleText").innerText = data.title || "Neeraj Swami";
+  document.getElementById("homeSubtitleText").innerText = data.subtitle || "Full Stack Developer | IT Support Assistant";
+
+  const heroParagraph = document.querySelector(".hero div p:nth-of-type(2)");
+  if(heroParagraph){
+    heroParagraph.innerText = data.skills || "I help people and organizations with digital services, government documentation, IT support, and modern web solutions.";
+  }
+
+  const whatIDo = document.querySelector(".hero .card p");
+  if(whatIDo){
+    whatIDo.innerText = data.whatIDo || "I provide practical solutions in IT support, e-Mitra services and web development.";
+  }
+
+  const projectBtn = document.querySelector(".hero .btn");
+  const hireBtn = document.querySelector(".hero .btn.secondary");
+
+  if(projectBtn) projectBtn.innerText = data.projectBtn || "View Projects";
+  if(hireBtn) hireBtn.innerText = data.hireBtn || "Hire Me";
+
+  const grid = document.querySelector(".section .grid");
+  if(grid && data.highlights){
+    const items = data.highlights.split("\n").filter(Boolean);
+
+    grid.innerHTML = items.map(item=>{
+      const parts = item.split("|");
+      return `
+        <div class="service">
+          <h3>${parts[0] || "Highlight"}</h3>
+          <p>${parts[1] || ""}</p>
+        </div>
+      `;
+    }).join("");
+  }
+}
+
+loadModernHome();
+</script>
 <body>
  <nav class="navbar">
   <div class="logo">
