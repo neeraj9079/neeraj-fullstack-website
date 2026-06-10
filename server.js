@@ -536,6 +536,22 @@ app.post("/api/admin/hire", requireAdmin, (req, res) => {
   res.json({ message: "Hire Me page updated successfully" });
 });
 
+/* CONTACT INFO */
+app.get("/api/contact-info", (req, res) => {
+  res.json(readJson(path.join(__dirname, "data", "contact-info.json"), {
+    name: "Neeraj Swami",
+    role: "IT Support Assistant & Full Stack Learner",
+    email: "swamineeraj642@gmail.com",
+    location: "Rajasthan, India",
+    description: "Feel free to contact me regarding IT Support, e-Mitra services, web development projects, technical collaboration, or professional opportunities."
+  }));
+});
+
+app.post("/api/admin/contact-info", requireAdmin, (req, res) => {
+  writeJson(path.join(__dirname, "data", "contact-info.json"), req.body);
+  res.json({ message: "Contact information updated successfully" });
+});
+
 /* SETTINGS */
 app.get("/api/settings", (req, res) => {
   res.json(readJson(path.join(__dirname, "data", "settings.json"), {

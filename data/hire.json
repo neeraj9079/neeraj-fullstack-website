@@ -1,0 +1,20 @@
+{
+  "title": "Hire Me",
+  "intro": "Looking for a reliable professional for IT Support, e-Mitra services, web development, or technical assistance? Let's work together.",
+  "services": [
+    {
+      "title": "Website Development",
+      "description": "Responsive websites using HTML, CSS, JavaScript, Node.js and modern web technologies."
+    },
+    {
+      "title": "IT Support Services",
+      "description": "Technical support, troubleshooting, computer maintenance and system assistance."
+    },
+    {
+      "title": "e-Mitra Services",
+      "description": "Government documentation, online applications, digital services and citizen support."
+    }
+  ],
+  "buttonText": "Hire Me Now",
+  "resumeButtonText": "View Resume"
+}

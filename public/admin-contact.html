@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact Info Admin | Neeraj.dev</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+.contact-admin-card{background:#fff;border-radius:22px;padding:26px;box-shadow:0 14px 40px rgba(0,0,0,.07)}
+.contact-form{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.contact-form .full{grid-column:1/-1}
+.contact-form label{font-weight:800;color:#111827}
+.contact-form input,.contact-form textarea{width:100%;padding:15px;border:1px solid #e5e7eb;border-radius:14px;font-size:15px}
+.contact-form textarea{min-height:130px;resize:vertical}
+.contact-form input:focus,.contact-form textarea:focus{outline:none;border-color:#db2777;box-shadow:0 0 0 3px rgba(219,39,119,.12)}
+.save-btn{background:#db2777;color:#fff;border:0;padding:14px 24px;border-radius:14px;font-weight:800;cursor:pointer}
+@media(max-width:900px){.contact-form{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body class="admin-body">
+
+<nav class="admin-topbar">
+  <div class="admin-brand"><span>Neeraj.dev</span></div>
+  <div class="admin-actions">
+    <a href="admin.html">Main Admin</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <h3>Contact Admin</h3>
+    <a href="admin.html">Dashboard</a>
+    <a href="contact.html" target="_blank">View Contact Page</a>
+  </aside>
+
+  <main class="admin-main">
+    <section class="admin-section">
+      <h2>Manage Contact Information</h2>
+
+      <div class="contact-admin-card">
+        <form id="contactInfoForm" class="contact-form">
+          <div>
+            <label>Name</label>
+            <input type="text" id="contactInfoName">
+          </div>
+
+          <div>
+            <label>Role</label>
+            <input type="text" id="contactInfoRole">
+          </div>
+
+          <div>
+            <label>Email</label>
+            <input type="email" id="contactInfoEmail">
+          </div>
+
+          <div>
+            <label>Location</label>
+            <input type="text" id="contactInfoLocation">
+          </div>
+
+          <div class="full">
+            <label>Description</label>
+            <textarea id="contactInfoDescription"></textarea>
+          </div>
+
+          <div class="full">
+            <button type="submit" class="save-btn">Save Contact Information</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+async function logout(){
+  await fetch("/api/logout",{method:"POST"});
+  location.href="login.html";
+}
+
+async function loadContactInfo(){
+  const res = await fetch("/api/contact-info");
+  const data = await res.json();
+
+  contactInfoName.value = data.name || "";
+  contactInfoRole.value = data.role || "";
+  contactInfoEmail.value = data.email || "";
+  contactInfoLocation.value = data.location || "";
+  contactInfoDescription.value = data.description || "";
+}
+
+contactInfoForm.addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const payload = {
+    name: contactInfoName.value,
+    role: contactInfoRole.value,
+    email: contactInfoEmail.value,
+    location: contactInfoLocation.value,
+    description: contactInfoDescription.value
+  };
+
+  const res = await fetch("/api/admin/contact-info", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  alert(data.message || "Contact info saved");
+});
+
+loadContactInfo();
+</script>
+
+</body>
+</html>

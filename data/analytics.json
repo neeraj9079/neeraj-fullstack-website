@@ -414,5 +414,45 @@
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
     "ip": "::1",
     "date": "2026-06-10T07:58:13.206Z"
+  },
+  {
+    "id": 1781079238383,
+    "page": "/",
+    "referrer": "Direct",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:13:58.383Z"
+  },
+  {
+    "id": 1781079242299,
+    "page": "/hire.html",
+    "referrer": "http://localhost:3000/",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:14:02.299Z"
+  },
+  {
+    "id": 1781079322928,
+    "page": "/hire.html",
+    "referrer": "http://localhost:3000/hire.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:15:22.928Z"
+  },
+  {
+    "id": 1781079329997,
+    "page": "/hire.html",
+    "referrer": "http://localhost:3000/hire.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:15:29.997Z"
+  },
+  {
+    "id": 1781079441343,
+    "page": "/contact.html",
+    "referrer": "http://localhost:3000/hire.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:17:21.343Z"
   }
 ]
