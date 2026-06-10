@@ -62,13 +62,6 @@
         </div>
       </div>
 
-      <div class="contact-item">
-        <span>📧</span>
-        <div>
-          <strong>Email</strong>
-          <p id="contactInfoEmailText">swamineeraj642@gmail.com</p>
-        </div>
-      </div>
 
       <div class="contact-item">
         <span>📍</span>
@@ -85,14 +78,15 @@
       </div>
 
       <div class="contact-buttons">
-        <a id="contactEmailBtn" href="#contactForm" class="contact-btn">
-  Send Message
-</a>
-
-        <a id="contactWhatsappBtn" href="https://wa.me/919079209552" target="_blank" class="contact-btn whatsapp-btn">
-          WhatsApp
-        </a>
-      </div>
+  <a
+    id="contactWhatsappBtn"
+    href="https://wa.me/919079209552"
+    target="_blank"
+    class="contact-btn whatsapp-btn"
+  >
+    📱 Chat on WhatsApp
+  </a>
+</div>
     </div>
 
     <form class="form-box" id="contactForm">
@@ -129,7 +123,7 @@ async function loadContactInfoPage() {
     const res = await fetch("/api/contact-info");
     const data = await res.json();
 
-    const email = data.email || "swamineeraj642@gmail.com";
+    
     const whatsapp = data.whatsapp || "919079209552";
 
     document.getElementById("contactInfoNameText").innerText =

@@ -934,3 +934,27 @@ select:focus {
 .whatsapp-btn{
   background:#25D366;
 }
+
+.contact-buttons{
+  margin-top:25px;
+}
+
+.whatsapp-btn{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+  padding:14px;
+  background:#25D366;
+  color:#fff;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:16px;
+  transition:.3s;
+}
+
+.whatsapp-btn:hover{
+  transform:translateY(-2px);
+  opacity:.95;
+}
