@@ -470,5 +470,109 @@
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
     "ip": "::1",
     "date": "2026-06-10T08:29:34.892Z"
+  },
+  {
+    "id": 1781080513319,
+    "page": "/",
+    "referrer": "Direct",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:35:13.319Z"
+  },
+  {
+    "id": 1781080515704,
+    "page": "/contact.html",
+    "referrer": "http://localhost:3000/",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:35:15.704Z"
+  },
+  {
+    "id": 1781080517437,
+    "page": "/login.html",
+    "referrer": "http://localhost:3000/contact.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:35:17.437Z"
+  },
+  {
+    "id": 1781080546059,
+    "page": "/admin-neeraj-9079",
+    "referrer": "http://localhost:3000/login.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:35:46.059Z"
+  },
+  {
+    "id": 1781080562706,
+    "page": "/index.html",
+    "referrer": "http://localhost:3000/contact.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:02.706Z"
+  },
+  {
+    "id": 1781080568692,
+    "page": "/about.html",
+    "referrer": "http://localhost:3000/index.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:08.692Z"
+  },
+  {
+    "id": 1781080572224,
+    "page": "/index.html",
+    "referrer": "http://localhost:3000/about.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:12.224Z"
+  },
+  {
+    "id": 1781080573697,
+    "page": "/projects.html",
+    "referrer": "http://localhost:3000/index.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:13.697Z"
+  },
+  {
+    "id": 1781080575483,
+    "page": "/gallery.html",
+    "referrer": "http://localhost:3000/projects.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:15.483Z"
+  },
+  {
+    "id": 1781080576757,
+    "page": "/projects.html",
+    "referrer": "http://localhost:3000/gallery.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:16.757Z"
+  },
+  {
+    "id": 1781080589546,
+    "page": "/resume.html",
+    "referrer": "http://localhost:3000/projects.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:29.546Z"
+  },
+  {
+    "id": 1781080595579,
+    "page": "/hire.html",
+    "referrer": "http://localhost:3000/resume.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:35.579Z"
+  },
+  {
+    "id": 1781080597306,
+    "page": "/contact.html",
+    "referrer": "http://localhost:3000/hire.html",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T08:36:37.306Z"
   }
 ]

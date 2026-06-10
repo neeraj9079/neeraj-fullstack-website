@@ -869,3 +869,68 @@ select:focus {
     grid-template-columns:1fr;
   }
 }
+
+.contact-card{
+  border-radius:24px;
+  padding:30px;
+  background:#fff;
+  box-shadow:0 15px 40px rgba(0,0,0,.08);
+}
+
+.contact-card h3{
+  color:#db2777;
+  margin-bottom:25px;
+  font-size:26px;
+}
+
+.contact-item{
+  display:flex;
+  align-items:flex-start;
+  gap:15px;
+  margin-bottom:20px;
+  padding:15px;
+  background:#fff7fb;
+  border-radius:15px;
+}
+
+.contact-item span{
+  font-size:22px;
+}
+
+.contact-item strong{
+  display:block;
+  color:#111827;
+  margin-bottom:4px;
+}
+
+.contact-item p{
+  margin:0;
+  color:#4b5563;
+}
+
+.contact-description{
+  margin-top:20px;
+  padding:18px;
+  background:#f9fafb;
+  border-radius:15px;
+  line-height:1.8;
+}
+
+.contact-buttons{
+  display:flex;
+  gap:15px;
+  margin-top:25px;
+}
+
+.contact-btn{
+  text-decoration:none;
+  padding:12px 22px;
+  border-radius:12px;
+  background:#db2777;
+  color:white;
+  font-weight:700;
+}
+
+.whatsapp-btn{
+  background:#25D366;
+}
