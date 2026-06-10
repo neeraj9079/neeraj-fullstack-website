@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hire Me Admin | Neeraj.dev</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+.hire-card{background:#fff;border-radius:22px;padding:26px;box-shadow:0 14px 40px rgba(0,0,0,.07)}
+.hire-form{display:grid;gap:18px}
+.hire-form input,.hire-form textarea{width:100%;padding:15px;border:1px solid #e5e7eb;border-radius:14px;font-size:15px}
+.hire-form textarea{min-height:120px;resize:vertical}
+.hire-form label{font-weight:800;color:#111827}
+.hire-form input:focus,.hire-form textarea:focus{outline:none;border-color:#db2777;box-shadow:0 0 0 3px rgba(219,39,119,.12)}
+.save-btn{background:#db2777;color:#fff;border:0;padding:14px 24px;border-radius:14px;font-weight:800;cursor:pointer}
+.small-note{color:#6b7280;font-size:14px}
+</style>
+</head>
+
+<body class="admin-body">
+
+<nav class="admin-topbar">
+  <div class="admin-brand"><span>Neeraj.dev</span></div>
+  <div class="admin-actions">
+    <a href="admin.html">Main Admin</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <h3>Hire Me Admin</h3>
+    <a href="admin.html">Dashboard</a>
+    <a href="hire.html" target="_blank">View Hire Page</a>
+  </aside>
+
+  <main class="admin-main">
+    <section class="admin-section">
+      <h2>Manage Hire Me Page</h2>
+
+      <div class="hire-card">
+        <form id="hireForm" class="hire-form">
+          <label>Page Title</label>
+          <input type="text" id="hireTitle" placeholder="Hire Me">
+
+          <label>Intro Text</label>
+          <textarea id="hireIntro" placeholder="Write intro text"></textarea>
+
+          <label>Services</label>
+          <p class="small-note">Format: Service Title | Service Description — one service per line</p>
+          <textarea id="hireServices"></textarea>
+
+          <label>Main Button Text</label>
+          <input type="text" id="hireButtonText" placeholder="Hire Me Now">
+
+          <label>Resume Button Text</label>
+          <input type="text" id="resumeButtonText" placeholder="View Resume">
+
+          <button type="submit" class="save-btn">Save Hire Page</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+async function logout(){
+  await fetch("/api/logout",{method:"POST"});
+  location.href="login.html";
+}
+
+async function loadHire(){
+  const res = await fetch("/api/hire");
+  const data = await res.json();
+
+  hireTitle.value = data.title || "Hire Me";
+  hireIntro.value = data.intro || "";
+  hireButtonText.value = data.buttonText || "Hire Me Now";
+  resumeButtonText.value = data.resumeButtonText || "View Resume";
+
+  hireServices.value = (data.services || []).map(s =>
+    `${s.title} | ${s.description}`
+  ).join("\n");
+}
+
+hireForm.addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const services = hireServices.value
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => {
+      const parts = line.split("|");
+      return {
+        title: parts[0]?.trim() || "Service",
+        description: parts[1]?.trim() || ""
+      };
+    });
+
+  const payload = {
+    title: hireTitle.value,
+    intro: hireIntro.value,
+    services,
+    buttonText: hireButtonText.value,
+    resumeButtonText: resumeButtonText.value
+  };
+
+  const res = await fetch("/api/admin/hire", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json();
+  alert(data.message || "Hire page saved");
+});
+
+loadHire();
+</script>
+
+</body>
+</html>

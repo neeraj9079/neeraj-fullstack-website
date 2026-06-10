@@ -293,34 +293,15 @@ app.delete("/api/admin/gallery/:id", requireAdmin, async (req, res) => {
 
 /* RESUME */
 app.get("/api/resume", (req, res) => {
-  res.json(readJson(path.join(__dirname, "data", "resume.json"), {
-    name: "Neeraj Swami",
-    role: "IT Support Assistant",
-    experience: "4+ years of experience in e-Mitra services, government documentation management, citizen support services, and digital operations.",
-    skills: "Python, SQL, HTML, CSS, JavaScript, Node.js, FastAPI, Flask, MySQL, SQLite, GitHub, Linux, MS Office, Database Management",
-    languages: "Hindi, English, Punjabi",
-    education: "Bachelor of Arts (BA)\nPGDCA (Post Graduate Diploma in Computer Applications)\nRBSE Senior Secondary",
-    objective: "To build a successful career in Information Technology by combining technical skills, practical experience, and continuous learning.",
-    resume: ""
-  }));
+  res.json(readJson(path.join(__dirname, "data", "resume.json"), { resume: "" }));
 });
 
 app.post("/api/admin/resume", requireAdmin, upload.single("resume"), (req, res) => {
-  const file = path.join(__dirname, "data", "resume.json");
-  const oldData = readJson(file, {});
-
-  writeJson(file, {
-    name: req.body.name || "",
-    role: req.body.role || "",
-    experience: req.body.experience || "",
-    skills: req.body.skills || "",
-    languages: req.body.languages || "",
-    education: req.body.education || "",
-    objective: req.body.objective || "",
-    resume: req.file ? `/uploads/${req.file.filename}` : oldData.resume || ""
+  writeJson(path.join(__dirname, "data", "resume.json"), {
+    resume: req.file ? `/uploads/${req.file.filename}` : ""
   });
 
-  res.json({ message: "Resume updated successfully" });
+  res.json({ message: "Resume uploaded successfully" });
 });
 
 /* CONTACT EMAIL */
@@ -524,6 +505,35 @@ app.get("/api/admin/visitor-stats", requireAdmin, (req, res) => {
     todayVisitors: 0,
     lastVisitDate: ""
   }));
+});
+
+/* HIRE ME */
+app.get("/api/hire", (req, res) => {
+  res.json(readJson(path.join(__dirname, "data", "hire.json"), {
+    title: "Hire Me",
+    intro: "Looking for a reliable professional for IT Support, e-Mitra services, web development, or technical assistance? Let's work together.",
+    services: [
+      {
+        title: "Website Development",
+        description: "Responsive websites using HTML, CSS, JavaScript, Node.js and modern web technologies."
+      },
+      {
+        title: "IT Support Services",
+        description: "Technical support, troubleshooting, computer maintenance and system assistance."
+      },
+      {
+        title: "e-Mitra Services",
+        description: "Government documentation, online applications, digital services and citizen support."
+      }
+    ],
+    buttonText: "Hire Me Now",
+    resumeButtonText: "View Resume"
+  }));
+});
+
+app.post("/api/admin/hire", requireAdmin, (req, res) => {
+  writeJson(path.join(__dirname, "data", "hire.json"), req.body);
+  res.json({ message: "Hire Me page updated successfully" });
 });
 
 /* SETTINGS */

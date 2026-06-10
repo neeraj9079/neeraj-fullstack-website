@@ -398,5 +398,21 @@
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
     "ip": "::1",
     "date": "2026-06-10T07:35:25.608Z"
+  },
+  {
+    "id": 1781078290761,
+    "page": "/",
+    "referrer": "Direct",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T07:58:10.761Z"
+  },
+  {
+    "id": 1781078293206,
+    "page": "/resume.html",
+    "referrer": "http://localhost:3000/",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "ip": "::1",
+    "date": "2026-06-10T07:58:13.206Z"
   }
 ]
