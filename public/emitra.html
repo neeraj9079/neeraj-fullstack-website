@@ -27,21 +27,57 @@ body {
   margin-bottom: 25px;
 }
 
-.emitra-search {
+.emitra-filter-box {
+  background: #fff;
+  border: 1px solid #fce7f3;
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 30px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.06);
+}
+
+.emitra-filter-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 15px;
+  align-items: center;
+}
+
+.emitra-search,
+.emitra-category {
   width: 100%;
-  max-width: 900px;
   padding: 16px 18px;
   border-radius: 14px;
   border: 1px solid #e5e7eb;
   background: #fff;
   font-size: 16px;
-  margin-bottom: 30px;
   outline: none;
 }
 
-.emitra-search:focus {
+.emitra-search:focus,
+.emitra-category:focus {
   border-color: #db2777;
   box-shadow: 0 0 0 3px rgba(219,39,119,0.12);
+}
+
+.clear-filter-btn {
+  padding: 16px 22px;
+  border: none;
+  border-radius: 14px;
+  background: #111827;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.emitra-count {
+  margin-top: 15px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.emitra-count strong {
+  color: #db2777;
 }
 
 .emitra-card-grid {
@@ -60,6 +96,12 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: 0.25s ease;
+}
+
+.emitra-card-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 45px rgba(219,39,119,0.14);
 }
 
 .emitra-card-box h3 {
@@ -82,6 +124,32 @@ body {
 
 .emitra-card-box strong {
   color: #111827;
+}
+
+.category-badge {
+  display: inline-block;
+  background: #fce7f3;
+  color: #be185d;
+  padding: 6px 12px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.status-badge {
+  display: inline-block;
+  background: #dcfce7;
+  color: #166534;
+  padding: 5px 10px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .emitra-card-body {
@@ -119,15 +187,23 @@ body {
 }
 
 .emitra-empty {
+  grid-column: 1 / -1;
   background: #fff;
   border-radius: 18px;
-  padding: 25px;
+  padding: 30px;
   border: 1px solid #fce7f3;
+  text-align: center;
+  color: #6b7280;
+  font-size: 16px;
 }
 
 @media (max-width: 1100px) {
   .emitra-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .emitra-filter-row {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -151,7 +227,6 @@ body {
 </style>
 </head>
 
-<script src="js/visitor.js"></script>
 <body>
 
 <nav class="navbar">
@@ -173,23 +248,42 @@ body {
     Search government services, required documents, forms and apply support.
   </p>
 
-  <input
-    type="text"
-    id="serviceSearch"
-    class="emitra-search"
-    placeholder="Search Service..."
-  >
+  <div class="emitra-filter-box">
+    <div class="emitra-filter-row">
+      <input
+        type="text"
+        id="serviceSearch"
+        class="emitra-search"
+        placeholder="Search by service, documents, fees..."
+      >
+
+      <select id="categoryFilter" class="emitra-category">
+        <option value="">All Categories</option>
+      </select>
+
+      <button class="clear-filter-btn" onclick="clearFilters()">Clear</button>
+    </div>
+
+    <div class="emitra-count">
+      Showing <strong id="showingCount">0</strong> of <strong id="totalCount">0</strong> services
+    </div>
+  </div>
 
   <div id="emitraServicesContainer" class="emitra-card-grid">
     <div class="emitra-empty">Loading Services...</div>
   </div>
 </section>
 
+<script src="js/visitor.js"></script>
+
 <script>
 const WHATSAPP_NUMBER = "919079209552";
 
 const searchBox = document.getElementById("serviceSearch");
+const categoryFilter = document.getElementById("categoryFilter");
 const container = document.getElementById("emitraServicesContainer");
+const showingCount = document.getElementById("showingCount");
+const totalCount = document.getElementById("totalCount");
 
 let allServices = [];
 
@@ -197,11 +291,28 @@ async function loadServices() {
   try {
     const res = await fetch("/api/emitra-services");
     allServices = await res.json();
-    renderServices(allServices);
+
+    totalCount.innerText = allServices.length;
+    loadCategories();
+    applyFilters();
   } catch (err) {
     console.error(err);
     container.innerHTML = '<div class="emitra-empty">Unable to load services.</div>';
   }
+}
+
+function loadCategories() {
+  const categories = [...new Set(
+    allServices
+      .map(service => service.category)
+      .filter(Boolean)
+  )];
+
+  categoryFilter.innerHTML = '<option value="">All Categories</option>';
+
+  categories.forEach(category => {
+    categoryFilter.innerHTML += `<option value="${category}">${category}</option>`;
+  });
 }
 
 function cleanText(value, limit) {
@@ -216,9 +327,44 @@ function cleanText(value, limit) {
   return spaced.length > limit ? spaced.substring(0, limit) + "..." : spaced;
 }
 
+function applyFilters() {
+  const keyword = searchBox.value.toLowerCase().trim();
+  const selectedCategory = categoryFilter.value.toLowerCase().trim();
+
+  const filtered = allServices.filter(service => {
+    const name = String(service.name || "").toLowerCase();
+    const category = String(service.category || "").toLowerCase();
+    const documents = String(service.documents || "").toLowerCase();
+    const fees = String(service.fees || "").toLowerCase();
+    const processingTime = String(service.processingTime || "").toLowerCase();
+    const description = String(service.description || "").toLowerCase();
+
+    const matchKeyword =
+      name.includes(keyword) ||
+      category.includes(keyword) ||
+      documents.includes(keyword) ||
+      fees.includes(keyword) ||
+      processingTime.includes(keyword) ||
+      description.includes(keyword);
+
+    const matchCategory =
+      !selectedCategory || category === selectedCategory;
+
+    return matchKeyword && matchCategory;
+  });
+
+  renderServices(filtered);
+}
+
 function renderServices(services) {
+  showingCount.innerText = services.length;
+
   if (!services.length) {
-    container.innerHTML = '<div class="emitra-empty">No services available.</div>';
+    container.innerHTML = `
+      <div class="emitra-empty">
+        No services found. Try another search or category.
+      </div>
+    `;
     return;
   }
 
@@ -227,16 +373,25 @@ function renderServices(services) {
       `Hello Neeraj Ji, I want to apply for ${service.name}. Please guide me.`
     );
 
+    const isInactive = String(service.status || "Active").toLowerCase() === "inactive";
+
     return `
       <div class="emitra-card-box">
         <div class="emitra-card-body">
+          <span class="category-badge">${cleanText(service.category, 45)}</span>
+
           <h3>${cleanText(service.name, 45)}</h3>
 
-          <p><strong>Category:</strong> ${cleanText(service.category, 45)}</p>
           <p><strong>Documents:</strong> ${cleanText(service.documents, 95)}</p>
           <p><strong>Fees:</strong> ${cleanText(service.fees, 35)}</p>
           <p><strong>Processing Time:</strong> ${cleanText(service.processingTime, 35)}</p>
-          <p><strong>Status:</strong> ${cleanText(service.status || "Active", 25)}</p>
+
+          <p>
+            <strong>Status:</strong>
+            <span class="status-badge ${isInactive ? "inactive" : ""}">
+              ${cleanText(service.status || "Active", 25)}
+            </span>
+          </p>
 
           ${
             service.description
@@ -265,17 +420,14 @@ function renderServices(services) {
   }).join("");
 }
 
-searchBox.addEventListener("input", () => {
-  const keyword = searchBox.value.toLowerCase();
+function clearFilters() {
+  searchBox.value = "";
+  categoryFilter.value = "";
+  applyFilters();
+}
 
-  const filtered = allServices.filter(service =>
-    String(service.name || "").toLowerCase().includes(keyword) ||
-    String(service.category || "").toLowerCase().includes(keyword) ||
-    String(service.documents || "").toLowerCase().includes(keyword)
-  );
-
-  renderServices(filtered);
-});
+searchBox.addEventListener("input", applyFilters);
+categoryFilter.addEventListener("change", applyFilters);
 
 loadServices();
 </script>
