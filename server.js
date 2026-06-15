@@ -362,63 +362,101 @@ app.delete("/api/admin/projects/:id", requireAdmin, async (req, res) => {
   }
 });
 
-/* GALLERY */
-app.get("/api/gallery", (req, res) => {
-  res.json(readJson(path.join(__dirname, "data", "gallery.json"), []));
+/* GALLERY - SUPABASE + CLOUDINARY */
+
+app.get("/api/gallery", async (req, res) => {
+  try {
+    const gallery = await dbQuery(
+      `SELECT id, title, image, description, public_id, created_at
+       FROM public.gallery
+       ORDER BY id DESC`
+    );
+
+    res.json(gallery);
+  } catch (error) {
+    console.error("GALLERY GET ERROR:", error.message);
+    res.status(500).json({
+      message: "Gallery loading failed",
+      error: error.message
+    });
+  }
 });
 
 app.post("/api/admin/gallery", requireAdmin, upload.single("image"), async (req, res) => {
   try {
-    const file = path.join(__dirname, "data", "gallery.json");
-
     if (!req.file) {
-      return res.status(400).json({ message: "Please upload an image" });
+      return res.status(400).json({
+        message: "Please upload an image"
+      });
     }
 
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: "neeraj-portfolio-gallery"
     });
 
-    const gallery = readJson(file, []);
+    const rows = await dbQuery(
+      `INSERT INTO public.gallery
+       (title, image, description, public_id)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [
+        req.body.title || "",
+        result.secure_url,
+        req.body.description || "",
+        result.public_id
+      ]
+    );
 
-    gallery.push({
-      id: Date.now(),
-      title: req.body.title,
-      image: result.secure_url,
-      description: req.body.description || "",
-      public_id: result.public_id
+    if (fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    res.json({
+      message: "Gallery image uploaded successfully",
+      item: rows[0]
     });
 
-    writeJson(file, gallery);
-
-    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-
-    res.json({ message: "Gallery image uploaded to Cloudinary successfully" });
   } catch (error) {
-    console.error("Cloudinary upload error:", error);
-    res.status(500).json({ message: "Image upload failed" });
+    console.error("GALLERY UPLOAD ERROR:", error.message);
+    res.status(500).json({
+      message: "Image upload failed",
+      error: error.message
+    });
   }
 });
 
 app.delete("/api/admin/gallery/:id", requireAdmin, async (req, res) => {
   try {
-    const file = path.join(__dirname, "data", "gallery.json");
-    const gallery = readJson(file, []);
-    const item = gallery.find(g => String(g.id) === String(req.params.id));
+    const rows = await dbQuery(
+      "SELECT public_id FROM public.gallery WHERE id = $1",
+      [req.params.id]
+    );
+
+    const item = rows[0];
 
     if (item && item.public_id) {
       try {
         await cloudinary.uploader.destroy(item.public_id);
       } catch (cloudinaryError) {
-        console.error("Cloudinary delete error:", cloudinaryError);
+        console.error("Cloudinary delete error:", cloudinaryError.message);
       }
     }
 
-    writeJson(file, gallery.filter(g => String(g.id) !== String(req.params.id)));
-    res.json({ message: "Gallery item deleted successfully" });
+    await dbQuery(
+      "DELETE FROM public.gallery WHERE id = $1",
+      [req.params.id]
+    );
+
+    res.json({
+      message: "Gallery item deleted successfully"
+    });
+
   } catch (error) {
-    console.error("Gallery delete error:", error);
-    res.status(500).json({ message: "Gallery item delete failed" });
+    console.error("GALLERY DELETE ERROR:", error.message);
+    res.status(500).json({
+      message: "Gallery item delete failed",
+      error: error.message
+    });
   }
 });
 
