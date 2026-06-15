@@ -251,17 +251,6 @@ app.get("/admin-projects-neeraj-9079", requireAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin-projects.html"));
 });
 
-/* USERS */
-app.get("/api/admin/users", requireAdmin, (req, res) => {
-  const users = readUsers().map(({ password, ...safe }) => safe);
-  res.json(users);
-});
-
-app.delete("/api/admin/users/:id", requireAdmin, (req, res) => {
-  const users = readUsers();
-  saveUsers(users.filter(user => String(user.id) !== String(req.params.id)));
-  res.json({ message: "User deleted successfully" });
-});
 
 /* HOME */
 app.get("/api/home", (req, res) => {
@@ -749,37 +738,6 @@ app.delete("/api/admin/emitra-services/:id", requireAdmin, async (req, res) => {
   }
 });
 
-/* VISITOR COUNTER */
-app.get("/api/visitor-count", (req, res) => {
-  const file = path.join(__dirname, "data", "visitors.json");
-
-  const data = readJson(file, {
-    totalVisitors: 0,
-    todayVisitors: 0,
-    lastVisitDate: ""
-  });
-
-  const today = new Date().toLocaleDateString();
-  data.totalVisitors += 1;
-
-  if (data.lastVisitDate !== today) {
-    data.todayVisitors = 1;
-    data.lastVisitDate = today;
-  } else {
-    data.todayVisitors += 1;
-  }
-
-  writeJson(file, data);
-  res.json(data);
-});
-
-app.get("/api/admin/visitor-stats", requireAdmin, (req, res) => {
-  res.json(readJson(path.join(__dirname, "data", "visitors.json"), {
-    totalVisitors: 0,
-    todayVisitors: 0,
-    lastVisitDate: ""
-  }));
-});
 
 /* HIRE ME */
 app.get("/api/hire", (req, res) => {
@@ -964,69 +922,21 @@ app.get("/api/admin/analytics", requireAdmin, async (req, res) => {
   }
 });
 
-/* SUPABASE DATABASE */
-
 let pool = null;
 
 if (process.env.DATABASE_URL) {
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
-    }
+    ssl: { rejectUnauthorized: false }
   });
-
-  pool.on("error", (err) => {
-    console.error("PostgreSQL Pool Error:", err.message);
-  });
-
-  pool.query("SELECT NOW()")
-    .then(() => {
-      console.log("Supabase Connected Successfully");
-    })
-    .catch((err) => {
-      console.error("Supabase Connection Error:", err.message);
-    });
-} else {
-  console.log("DATABASE_URL not found. Database disabled.");
 }
 
-app.get("/api/test-db", async (req, res) => {
-  try {
-    if (!pool) {
-      return res.status(500).json({
-        success: false,
-        error: "DATABASE_URL missing"
-      });
-    }
-
-    const result = await pool.query("SELECT NOW()");
-
-    res.json({
-      success: true,
-      message: "Supabase Connected Successfully",
-      time: result.rows[0].now
-    });
-
-  } catch (err) {
-    console.error("DB TEST ERROR:", err.message);
-
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
-  }
-});
-
 async function dbQuery(query, params = []) {
-  if (!pool) {
-    throw new Error("Database not connected");
-  }
+  if (!pool) throw new Error("Database not connected");
 
   const result = await pool.query(query, params);
   return result.rows;
 }
-
 
 app.listen(PORT, () => {
   console.log(`Website running at http://localhost:${PORT}`);
