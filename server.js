@@ -209,52 +209,74 @@ app.post("/api/admin/about", requireAdmin, (req, res) => {
 
 app.get("/api/projects", async (req, res) => {
   try {
-    const projects = await dbQuery(
-      "SELECT * FROM projects ORDER BY id DESC"
+    const result = await pool.query(
+      `SELECT id, title, description, github, demo, created_at
+       FROM projects
+       ORDER BY id DESC`
     );
 
-    res.json(projects);
+    res.json(result.rows);
   } catch (error) {
     console.error("PROJECTS GET ERROR:", error.message);
-    res.status(500).json({ message: "Projects loading failed" });
+    res.status(500).json({
+      message: "Projects loading failed",
+      error: error.message
+    });
   }
 });
 
 app.post("/api/admin/projects", requireAdmin, async (req, res) => {
   try {
-    const { title, description, github, demo } = req.body;
+    const title = req.body.title || "";
+    const description = req.body.description || "";
+    const github = req.body.github || "";
+    const demo = req.body.demo || "";
 
-    await dbQuery(
-      "INSERT INTO projects (title, description, github, demo) VALUES ($1, $2, $3, $4)",
-      [title, description, github || "", demo || ""]
+    if (!title.trim()) {
+      return res.status(400).json({
+        message: "Project title is required"
+      });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO projects (title, description, github, demo)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, title, description, github, demo, created_at`,
+      [title, description, github, demo]
     );
 
-    res.json({ message: "Project added successfully" });
+    res.json({
+      message: "Project added successfully",
+      project: result.rows[0]
+    });
+
   } catch (error) {
     console.error("PROJECT ADD ERROR:", error.message);
-    res.status(500).json({ message: "Project add failed" });
+    res.status(500).json({
+      message: "Project add failed",
+      error: error.message
+    });
   }
 });
 
 app.delete("/api/admin/projects/:id", requireAdmin, async (req, res) => {
   try {
-    await dbQuery(
-      "DELETE FROM projects WHERE id = $1",
+    await pool.query(
+      `DELETE FROM projects WHERE id = $1`,
       [req.params.id]
     );
 
-    res.json({ message: "Project deleted successfully" });
+    res.json({
+      message: "Project deleted successfully"
+    });
+
   } catch (error) {
     console.error("PROJECT DELETE ERROR:", error.message);
-    res.status(500).json({ message: "Project delete failed" });
+    res.status(500).json({
+      message: "Project delete failed",
+      error: error.message
+    });
   }
-});
-
-app.delete("/api/admin/projects/:id", requireAdmin, (req, res) => {
-  const file = path.join(__dirname, "data", "projects.json");
-  const projects = readJson(file, []);
-  writeJson(file, projects.filter(p => String(p.id) !== String(req.params.id)));
-  res.json({ message: "Project deleted successfully" });
 });
 
 /* GALLERY */
