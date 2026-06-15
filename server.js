@@ -457,8 +457,8 @@ app.delete("/api/admin/messages/:id", requireAdmin, (req, res) => {
 
 app.get("/api/emitra-services", async (req, res) => {
   try {
-    const services = await dbQuery(
-      `SELECT 
+    const services = await dbQuery(`
+      SELECT 
         id,
         name,
         category,
@@ -470,23 +470,27 @@ app.get("/api/emitra-services", async (req, res) => {
         form_name AS "formName",
         form_pdf AS "formPdf",
         created_at
-       FROM emitra_services
-       ORDER BY id DESC`
-    );
+      FROM public.emitra_services
+      ORDER BY id DESC
+    `);
 
     res.json(services);
   } catch (error) {
     console.error("EMITRA GET ERROR:", error.message);
-    res.status(500).json({ message: "e-Mitra services loading failed" });
+    res.status(500).json({
+      message: "e-Mitra services loading failed",
+      error: error.message
+    });
   }
 });
 
 app.post("/api/admin/emitra-services", requireAdmin, upload.single("formPdf"), async (req, res) => {
   try {
-    await dbQuery(
-      `INSERT INTO emitra_services 
+    const rows = await dbQuery(
+      `INSERT INTO public.emitra_services 
        (name, category, documents, fees, processing_time, description, status, form_name, form_pdf)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+       RETURNING *`,
       [
         req.body.name,
         req.body.category,
@@ -500,24 +504,30 @@ app.post("/api/admin/emitra-services", requireAdmin, upload.single("formPdf"), a
       ]
     );
 
-    res.json({ message: "e-Mitra Service Added Successfully" });
+    res.json({
+      message: "e-Mitra Service Added Successfully",
+      service: rows[0]
+    });
   } catch (error) {
     console.error("EMITRA ADD ERROR:", error.message);
-    res.status(500).json({ message: "e-Mitra service add failed" });
+    res.status(500).json({
+      message: "e-Mitra service add failed",
+      error: error.message
+    });
   }
 });
 
 app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf"), async (req, res) => {
   try {
     const oldRows = await dbQuery(
-      "SELECT form_name, form_pdf FROM emitra_services WHERE id = $1",
+      "SELECT form_name, form_pdf FROM public.emitra_services WHERE id = $1",
       [req.params.id]
     );
 
     const oldService = oldRows[0] || {};
 
-    await dbQuery(
-      `UPDATE emitra_services SET
+    const rows = await dbQuery(
+      `UPDATE public.emitra_services SET
         name = $1,
         category = $2,
         documents = $3,
@@ -527,7 +537,8 @@ app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf")
         status = $7,
         form_name = $8,
         form_pdf = $9
-       WHERE id = $10`,
+       WHERE id = $10
+       RETURNING *`,
       [
         req.body.name,
         req.body.category,
@@ -542,67 +553,36 @@ app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf")
       ]
     );
 
-    res.json({ message: "e-Mitra Service Updated Successfully" });
+    res.json({
+      message: "e-Mitra Service Updated Successfully",
+      service: rows[0]
+    });
   } catch (error) {
     console.error("EMITRA UPDATE ERROR:", error.message);
-    res.status(500).json({ message: "e-Mitra service update failed" });
+    res.status(500).json({
+      message: "e-Mitra service update failed",
+      error: error.message
+    });
   }
 });
 
 app.delete("/api/admin/emitra-services/:id", requireAdmin, async (req, res) => {
   try {
     await dbQuery(
-      "DELETE FROM emitra_services WHERE id = $1",
+      "DELETE FROM public.emitra_services WHERE id = $1",
       [req.params.id]
     );
 
-    res.json({ message: "e-Mitra Service Deleted Successfully" });
+    res.json({
+      message: "e-Mitra Service Deleted Successfully"
+    });
   } catch (error) {
     console.error("EMITRA DELETE ERROR:", error.message);
-    res.status(500).json({ message: "e-Mitra service delete failed" });
+    res.status(500).json({
+      message: "e-Mitra service delete failed",
+      error: error.message
+    });
   }
-});
-
-app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf"), (req, res) => {
-  const services = readJson(EMITRA_FILE, []);
-
-  const updatedServices = services.map(service => {
-    if (String(service.id) === String(req.params.id)) {
-      return {
-        ...service,
-        name: req.body.name,
-        category: req.body.category,
-        documents: req.body.documents || "",
-        fees: req.body.fees || "",
-        processingTime: req.body.processingTime || "",
-        description: req.body.description || "",
-        status: req.body.status || "Active",
-        formName: req.body.formName || service.formName || "",
-        formPdf: req.file ? `/uploads/${req.file.filename}` : service.formPdf || ""
-      };
-    }
-
-    return service;
-  });
-
-  writeJson(EMITRA_FILE, updatedServices);
-
-  res.json({
-    message: "e-Mitra Service Updated Successfully"
-  });
-});
-
-app.delete("/api/admin/emitra-services/:id", requireAdmin, (req, res) => {
-  const services = readJson(EMITRA_FILE, []);
-
-  writeJson(
-    EMITRA_FILE,
-    services.filter(service => String(service.id) !== String(req.params.id))
-  );
-
-  res.json({
-    message: "e-Mitra Service Deleted Successfully"
-  });
 });
 
 /* VISITOR COUNTER */
