@@ -71,12 +71,24 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
-function readUsers() {
-  return readJson(USERS_FILE, []);
+async function readUsers() {
+  return await dbQuery(
+    "SELECT * FROM users ORDER BY id ASC"
+  );
 }
 
-function saveUsers(users) {
-  writeJson(USERS_FILE, users);
+async function saveUser(user) {
+  await dbQuery(
+    `INSERT INTO users (id, name, email, password, role)
+     VALUES ($1,$2,$3,$4,$5)`,
+    [
+      user.id,
+      user.name,
+      user.email,
+      user.password,
+      user.role
+    ]
+  );
 }
 
 function requireLogin(req, res, next) {
@@ -91,7 +103,8 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-/* AUTH */
+/* AUTH - SUPABASE */
+
 app.post("/api/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -100,38 +113,66 @@ app.post("/api/register", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const users = readUsers();
+    const existingUsers = await dbQuery(
+      "SELECT * FROM public.users WHERE email = $1",
+      [email]
+    );
 
-    if (users.find(u => u.email === email)) {
+    if (existingUsers.length > 0) {
       return res.status(409).json({ message: "Email already registered" });
     }
 
-    users.push({
-      id: Date.now(),
-      name,
-      email,
-      password: await bcrypt.hash(password, 10),
-      role: users.length === 0 ? "admin" : "user"
+    const allUsers = await dbQuery("SELECT id FROM public.users LIMIT 1");
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const rows = await dbQuery(
+      `INSERT INTO public.users (id, name, email, password, role)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, name, email, role`,
+      [
+        Date.now(),
+        name,
+        email,
+        hashedPassword,
+        allUsers.length === 0 ? "admin" : "user"
+      ]
+    );
+
+    res.json({
+      message: "Registered successfully. First user becomes admin.",
+      user: rows[0]
     });
 
-    saveUsers(users);
-    res.json({ message: "Registered successfully. First user becomes admin." });
   } catch (error) {
-    console.error("REGISTER ERROR:", error);
-    res.status(500).json({ message: "Register failed" });
+    console.error("REGISTER ERROR:", error.message);
+    res.status(500).json({
+      message: "Register failed",
+      error: error.message
+    });
   }
 });
 
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const users = readUsers();
-    const user = users.find(u => u.email === email);
 
-    if (!user) return res.status(401).json({ message: "Invalid email or password" });
+    const rows = await dbQuery(
+      "SELECT * FROM public.users WHERE email = $1",
+      [email]
+    );
+
+    const user = rows[0];
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(401).json({ message: "Invalid email or password" });
+
+    if (!ok) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
     req.session.user = {
       id: user.id,
@@ -140,10 +181,52 @@ app.post("/api/login", async (req, res) => {
       role: user.role
     };
 
-    res.json({ message: "Login successful", role: user.role });
+    res.json({
+      message: "Login successful",
+      role: user.role
+    });
+
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
-    res.status(500).json({ message: "Server login error" });
+    console.error("LOGIN ERROR:", error.message);
+    res.status(500).json({
+      message: "Server login error",
+      error: error.message
+    });
+  }
+});
+
+/* USERS - SUPABASE */
+
+app.get("/api/admin/users", requireAdmin, async (req, res) => {
+  try {
+    const users = await dbQuery(
+      "SELECT id, name, email, role, created_at FROM public.users ORDER BY id DESC"
+    );
+
+    res.json(users);
+  } catch (error) {
+    console.error("USERS GET ERROR:", error.message);
+    res.status(500).json({
+      message: "Users loading failed",
+      error: error.message
+    });
+  }
+});
+
+app.delete("/api/admin/users/:id", requireAdmin, async (req, res) => {
+  try {
+    await dbQuery(
+      "DELETE FROM public.users WHERE id = $1",
+      [req.params.id]
+    );
+
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("USER DELETE ERROR:", error.message);
+    res.status(500).json({
+      message: "User delete failed",
+      error: error.message
+    });
   }
 });
 
