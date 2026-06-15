@@ -205,19 +205,19 @@ app.post("/api/admin/about", requireAdmin, (req, res) => {
   res.json({ message: "About page updated successfully" });
 });
 
-/* PROJECTS - SUPABASE */
+/* PROJECTS - SUPABASE SAFE */
 
 app.get("/api/projects", async (req, res) => {
   try {
-    const result = await pool.query(
+    const rows = await dbQuery(
       `SELECT id, title, description, github, demo, created_at
-       FROM projects
+       FROM public.projects
        ORDER BY id DESC`
     );
 
-    res.json(result.rows);
+    res.json(rows);
   } catch (error) {
-    console.error("PROJECTS GET ERROR:", error.message);
+    console.error("PROJECTS GET ERROR:", error);
     res.status(500).json({
       message: "Projects loading failed",
       error: error.message
@@ -227,19 +227,19 @@ app.get("/api/projects", async (req, res) => {
 
 app.post("/api/admin/projects", requireAdmin, async (req, res) => {
   try {
-    const title = req.body.title || "";
-    const description = req.body.description || "";
-    const github = req.body.github || "";
-    const demo = req.body.demo || "";
+    const title = String(req.body.title || "").trim();
+    const description = String(req.body.description || "").trim();
+    const github = String(req.body.github || "").trim();
+    const demo = String(req.body.demo || "").trim();
 
-    if (!title.trim()) {
+    if (!title) {
       return res.status(400).json({
         message: "Project title is required"
       });
     }
 
-    const result = await pool.query(
-      `INSERT INTO projects (title, description, github, demo)
+    const rows = await dbQuery(
+      `INSERT INTO public.projects (title, description, github, demo)
        VALUES ($1, $2, $3, $4)
        RETURNING id, title, description, github, demo, created_at`,
       [title, description, github, demo]
@@ -247,11 +247,11 @@ app.post("/api/admin/projects", requireAdmin, async (req, res) => {
 
     res.json({
       message: "Project added successfully",
-      project: result.rows[0]
+      project: rows[0]
     });
 
   } catch (error) {
-    console.error("PROJECT ADD ERROR:", error.message);
+    console.error("PROJECT ADD ERROR:", error);
     res.status(500).json({
       message: "Project add failed",
       error: error.message
@@ -261,8 +261,8 @@ app.post("/api/admin/projects", requireAdmin, async (req, res) => {
 
 app.delete("/api/admin/projects/:id", requireAdmin, async (req, res) => {
   try {
-    await pool.query(
-      `DELETE FROM projects WHERE id = $1`,
+    await dbQuery(
+      `DELETE FROM public.projects WHERE id = $1`,
       [req.params.id]
     );
 
@@ -271,7 +271,7 @@ app.delete("/api/admin/projects/:id", requireAdmin, async (req, res) => {
     });
 
   } catch (error) {
-    console.error("PROJECT DELETE ERROR:", error.message);
+    console.error("PROJECT DELETE ERROR:", error);
     res.status(500).json({
       message: "Project delete failed",
       error: error.message
