@@ -498,14 +498,11 @@ async function sendContactEmails(message) {
   }
 }
 
-/* CONTACT */
-app.post("/api/contact", (req, res) => {
-  try {
-    const file = path.join(__dirname, "data", "messages.json");
-    const messages = readJson(file, []);
+/* CONTACT - SUPABASE */
 
-    const message = {
-      id: Date.now(),
+app.post("/api/contact", async (req, res) => {
+  try {
+    const messageData = {
       name: req.body.name || "",
       email: req.body.email || "",
       mobile: req.body.mobile || "",
@@ -514,28 +511,74 @@ app.post("/api/contact", (req, res) => {
       date: new Date().toLocaleString()
     };
 
-    messages.push(message);
-    writeJson(file, messages);
+    const rows = await dbQuery(
+      `INSERT INTO public.messages 
+       (name, email, mobile, subject, message, date)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        messageData.name,
+        messageData.email,
+        messageData.mobile,
+        messageData.subject,
+        messageData.message,
+        messageData.date
+      ]
+    );
 
-    res.json({ message: "Message sent successfully" });
-    sendContactEmails(message);
+    res.json({
+      message: "Message sent successfully",
+      data: rows[0]
+    });
+
+    sendContactEmails(messageData);
+
   } catch (error) {
-    console.error("CONTACT ERROR:", error);
-    res.status(500).json({ message: "Message failed" });
+    console.error("CONTACT ERROR:", error.message);
+    res.status(500).json({
+      message: "Message failed",
+      error: error.message
+    });
   }
 });
 
-app.get("/api/admin/messages", requireAdmin, (req, res) => {
-  res.json(readJson(path.join(__dirname, "data", "messages.json"), []));
+app.get("/api/admin/messages", requireAdmin, async (req, res) => {
+  try {
+    const messages = await dbQuery(
+      `SELECT id, name, email, mobile, subject, message, date, created_at
+       FROM public.messages
+       ORDER BY id DESC`
+    );
+
+    res.json(messages);
+  } catch (error) {
+    console.error("MESSAGES GET ERROR:", error.message);
+    res.status(500).json({
+      message: "Messages loading failed",
+      error: error.message
+    });
+  }
 });
 
-app.delete("/api/admin/messages/:id", requireAdmin, (req, res) => {
-  const file = path.join(__dirname, "data", "messages.json");
-  const messages = readJson(file, []);
-  writeJson(file, messages.filter(msg => String(msg.id) !== String(req.params.id)));
-  res.json({ message: "Message deleted successfully" });
-});
+app.delete("/api/admin/messages/:id", requireAdmin, async (req, res) => {
+  try {
+    await dbQuery(
+      "DELETE FROM public.messages WHERE id = $1",
+      [req.params.id]
+    );
 
+    res.json({
+      message: "Message deleted successfully"
+    });
+
+  } catch (error) {
+    console.error("MESSAGE DELETE ERROR:", error.message);
+    res.status(500).json({
+      message: "Message delete failed",
+      error: error.message
+    });
+  }
+});
 /* EMITRA SERVICES - SUPABASE */
 
 app.get("/api/emitra-services", async (req, res) => {
