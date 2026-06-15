@@ -788,22 +788,75 @@ app.post("/api/admin/contact-info", requireAdmin, (req, res) => {
   res.json({ message: "Contact information updated successfully" });
 });
 
-/* SETTINGS */
-app.get("/api/settings", (req, res) => {
-  res.json(readJson(path.join(__dirname, "data", "settings.json"), {
-    logo: "Neeraj.dev",
-    footer: "© 2026 Neeraj Swami. All Rights Reserved.",
-    whatsapp: "",
-    email: "",
-    github: "",
-    linkedin: "",
-    instagram: ""
-  }));
+/* SETTINGS - SUPABASE */
+
+app.get("/api/settings", async (req, res) => {
+  try {
+    const rows = await dbQuery(
+      "SELECT * FROM public.settings WHERE id = 1"
+    );
+
+    if (rows.length === 0) {
+      return res.json({
+        logo: "Neeraj.dev",
+        footer: "© 2026 Neeraj Swami. All Rights Reserved.",
+        whatsapp: "",
+        email: "",
+        github: "",
+        linkedin: "",
+        instagram: ""
+      });
+    }
+
+    res.json(rows[0]);
+
+  } catch (error) {
+    console.error("SETTINGS GET ERROR:", error.message);
+
+    res.status(500).json({
+      message: "Settings loading failed",
+      error: error.message
+    });
+  }
 });
 
-app.post("/api/admin/settings", requireAdmin, (req, res) => {
-  writeJson(path.join(__dirname, "data", "settings.json"), req.body);
-  res.json({ message: "Website settings updated successfully" });
+app.post("/api/admin/settings", requireAdmin, async (req, res) => {
+  try {
+    await dbQuery(
+      `UPDATE public.settings SET
+        logo = $1,
+        logo_image = $2,
+        footer = $3,
+        whatsapp = $4,
+        email = $5,
+        github = $6,
+        linkedin = $7,
+        instagram = $8
+       WHERE id = 1`,
+      [
+        req.body.logo || "",
+        req.body.logo_image || "",
+        req.body.footer || "",
+        req.body.whatsapp || "",
+        req.body.email || "",
+        req.body.github || "",
+        req.body.linkedin || "",
+        req.body.instagram || ""
+      ]
+    );
+
+    res.json({
+      message: "Settings updated successfully"
+    });
+
+  } catch (error) {
+    console.error("SETTINGS UPDATE ERROR:", error.message);
+
+    res.status(500).json({
+      message: "Settings update failed",
+      error: error.message
+    });
+  }
 });
 
 /* VISITOR ANALYTICS */
