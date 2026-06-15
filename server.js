@@ -1,3 +1,5 @@
+require("dotenv").config();
+const { Pool } = require("pg");
 const express = require("express");
 const session = require("express-session");
 const bcrypt = require("bcryptjs");
@@ -203,25 +205,49 @@ app.post("/api/admin/about", requireAdmin, (req, res) => {
   res.json({ message: "About page updated successfully" });
 });
 
-/* PROJECTS */
-app.get("/api/projects", (req, res) => {
-  res.json(readJson(path.join(__dirname, "data", "projects.json"), []));
+/* PROJECTS - SUPABASE */
+
+app.get("/api/projects", async (req, res) => {
+  try {
+    const projects = await dbQuery(
+      "SELECT * FROM projects ORDER BY id DESC"
+    );
+
+    res.json(projects);
+  } catch (error) {
+    console.error("PROJECTS GET ERROR:", error.message);
+    res.status(500).json({ message: "Projects loading failed" });
+  }
 });
 
-app.post("/api/admin/projects", requireAdmin, (req, res) => {
-  const file = path.join(__dirname, "data", "projects.json");
-  const projects = readJson(file, []);
+app.post("/api/admin/projects", requireAdmin, async (req, res) => {
+  try {
+    const { title, description, github, demo } = req.body;
 
-  projects.push({
-    id: Date.now(),
-    title: req.body.title,
-    description: req.body.description,
-    github: req.body.github || "",
-    demo: req.body.demo || ""
-  });
+    await dbQuery(
+      "INSERT INTO projects (title, description, github, demo) VALUES ($1, $2, $3, $4)",
+      [title, description, github || "", demo || ""]
+    );
 
-  writeJson(file, projects);
-  res.json({ message: "Project added successfully" });
+    res.json({ message: "Project added successfully" });
+  } catch (error) {
+    console.error("PROJECT ADD ERROR:", error.message);
+    res.status(500).json({ message: "Project add failed" });
+  }
+});
+
+app.delete("/api/admin/projects/:id", requireAdmin, async (req, res) => {
+  try {
+    await dbQuery(
+      "DELETE FROM projects WHERE id = $1",
+      [req.params.id]
+    );
+
+    res.json({ message: "Project deleted successfully" });
+  } catch (error) {
+    console.error("PROJECT DELETE ERROR:", error.message);
+    res.status(500).json({ message: "Project delete failed" });
+  }
 });
 
 app.delete("/api/admin/projects/:id", requireAdmin, (req, res) => {
@@ -405,32 +431,114 @@ app.delete("/api/admin/messages/:id", requireAdmin, (req, res) => {
   res.json({ message: "Message deleted successfully" });
 });
 
-/* EMITRA SERVICES */
-app.get("/api/emitra-services", (req, res) => {
-  res.json(readJson(EMITRA_FILE, []));
+/* EMITRA SERVICES - SUPABASE */
+
+app.get("/api/emitra-services", async (req, res) => {
+  try {
+    const services = await dbQuery(
+      `SELECT 
+        id,
+        name,
+        category,
+        documents,
+        fees,
+        processing_time AS "processingTime",
+        description,
+        status,
+        form_name AS "formName",
+        form_pdf AS "formPdf",
+        created_at
+       FROM emitra_services
+       ORDER BY id DESC`
+    );
+
+    res.json(services);
+  } catch (error) {
+    console.error("EMITRA GET ERROR:", error.message);
+    res.status(500).json({ message: "e-Mitra services loading failed" });
+  }
 });
 
-app.post("/api/admin/emitra-services", requireAdmin, upload.single("formPdf"), (req, res) => {
-  const services = readJson(EMITRA_FILE, []);
+app.post("/api/admin/emitra-services", requireAdmin, upload.single("formPdf"), async (req, res) => {
+  try {
+    await dbQuery(
+      `INSERT INTO emitra_services 
+       (name, category, documents, fees, processing_time, description, status, form_name, form_pdf)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [
+        req.body.name,
+        req.body.category,
+        req.body.documents || "",
+        req.body.fees || "",
+        req.body.processingTime || "",
+        req.body.description || "",
+        req.body.status || "Active",
+        req.body.formName || "",
+        req.file ? `/uploads/${req.file.filename}` : ""
+      ]
+    );
 
-  services.push({
-    id: Date.now(),
-    name: req.body.name,
-    category: req.body.category,
-    documents: req.body.documents || "",
-    fees: req.body.fees || "",
-    processingTime: req.body.processingTime || "",
-    description: req.body.description || "",
-    status: req.body.status || "Active",
-    formName: req.body.formName || "",
-    formPdf: req.file ? `/uploads/${req.file.filename}` : ""
-  });
+    res.json({ message: "e-Mitra Service Added Successfully" });
+  } catch (error) {
+    console.error("EMITRA ADD ERROR:", error.message);
+    res.status(500).json({ message: "e-Mitra service add failed" });
+  }
+});
 
-  writeJson(EMITRA_FILE, services);
+app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf"), async (req, res) => {
+  try {
+    const oldRows = await dbQuery(
+      "SELECT form_name, form_pdf FROM emitra_services WHERE id = $1",
+      [req.params.id]
+    );
 
-  res.json({
-    message: "e-Mitra Service Added Successfully"
-  });
+    const oldService = oldRows[0] || {};
+
+    await dbQuery(
+      `UPDATE emitra_services SET
+        name = $1,
+        category = $2,
+        documents = $3,
+        fees = $4,
+        processing_time = $5,
+        description = $6,
+        status = $7,
+        form_name = $8,
+        form_pdf = $9
+       WHERE id = $10`,
+      [
+        req.body.name,
+        req.body.category,
+        req.body.documents || "",
+        req.body.fees || "",
+        req.body.processingTime || "",
+        req.body.description || "",
+        req.body.status || "Active",
+        req.body.formName || oldService.form_name || "",
+        req.file ? `/uploads/${req.file.filename}` : oldService.form_pdf || "",
+        req.params.id
+      ]
+    );
+
+    res.json({ message: "e-Mitra Service Updated Successfully" });
+  } catch (error) {
+    console.error("EMITRA UPDATE ERROR:", error.message);
+    res.status(500).json({ message: "e-Mitra service update failed" });
+  }
+});
+
+app.delete("/api/admin/emitra-services/:id", requireAdmin, async (req, res) => {
+  try {
+    await dbQuery(
+      "DELETE FROM emitra_services WHERE id = $1",
+      [req.params.id]
+    );
+
+    res.json({ message: "e-Mitra Service Deleted Successfully" });
+  } catch (error) {
+    console.error("EMITRA DELETE ERROR:", error.message);
+    res.status(500).json({ message: "e-Mitra service delete failed" });
+  }
 });
 
 app.put("/api/admin/emitra-services/:id", requireAdmin, upload.single("formPdf"), (req, res) => {
@@ -608,6 +716,70 @@ app.get("/api/admin/analytics", requireAdmin, (req, res) => {
     res.status(500).json({ message: "Analytics loading failed" });
   }
 });
+
+/* SUPABASE DATABASE */
+
+let pool = null;
+
+if (process.env.DATABASE_URL) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+
+  pool.on("error", (err) => {
+    console.error("PostgreSQL Pool Error:", err.message);
+  });
+
+  pool.query("SELECT NOW()")
+    .then(() => {
+      console.log("Supabase Connected Successfully");
+    })
+    .catch((err) => {
+      console.error("Supabase Connection Error:", err.message);
+    });
+} else {
+  console.log("DATABASE_URL not found. Database disabled.");
+}
+
+app.get("/api/test-db", async (req, res) => {
+  try {
+    if (!pool) {
+      return res.status(500).json({
+        success: false,
+        error: "DATABASE_URL missing"
+      });
+    }
+
+    const result = await pool.query("SELECT NOW()");
+
+    res.json({
+      success: true,
+      message: "Supabase Connected Successfully",
+      time: result.rows[0].now
+    });
+
+  } catch (err) {
+    console.error("DB TEST ERROR:", err.message);
+
+    res.status(500).json({
+      success: false,
+      error: err.message
+    });
+  }
+});
+
+async function dbQuery(query, params = []) {
+  if (!pool) {
+    throw new Error("Database not connected");
+  }
+
+  const result = await pool.query(query, params);
+  return result.rows;
+}
+
 
 app.listen(PORT, () => {
   console.log(`Website running at http://localhost:${PORT}`);

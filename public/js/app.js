@@ -256,18 +256,31 @@ if (projectForm) {
   projectForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
+    const body = {
+      title: document.getElementById("projectTitle").value,
+      description: document.getElementById("projectDescription").value,
+      github: document.getElementById("projectGithub").value,
+      demo: document.getElementById("projectDemo").value
+    };
+
+    console.log("PROJECT BODY:", body);
+
     const res = await fetch("/api/admin/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: document.getElementById("projectTitle").value,
-        description: document.getElementById("projectDescription").value,
-        github: document.getElementById("projectGithub").value,
-        demo: document.getElementById("projectDemo").value
-      })
+      credentials: "include",
+      body: JSON.stringify(body)
     });
 
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+
+    console.log("PROJECT RESPONSE:", res.status, data);
+
+    if (!res.ok) {
+      alert(data.message || `Project add failed. Status: ${res.status}`);
+      return;
+    }
+
     alert(data.message || "Project added successfully");
     location.reload();
   });
