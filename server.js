@@ -97,9 +97,20 @@ function requireLogin(req, res, next) {
 }
 
 function requireAdmin(req, res, next) {
-  if (!req.session.user || req.session.user.role !== "admin") {
-    return res.status(403).send("Access denied: Admin only");
+  if (!req.session || !req.session.user) {
+    return res.status(401).json({
+      message: "Login required",
+      user: null
+    });
   }
+
+  if (String(req.session.user.role).toLowerCase() !== "admin") {
+    return res.status(403).json({
+      message: "Admin access required",
+      user: req.session.user
+    });
+  }
+
   next();
 }
 
@@ -175,11 +186,11 @@ app.post("/api/login", async (req, res) => {
     }
 
     req.session.user = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role
-    };
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  role: String(user.role || "user").toLowerCase()
+};
 
     res.json({
       message: "Login successful",
